@@ -2,7 +2,7 @@
 	"name": "vscode-docker-perl",
 	"description": "",
 	"version": "0.0.1",
-	"publisher": "",
+	"publisher": "myOrg",
 	"engines": {
 		"vscode": "*"
 	},
@@ -20,12 +20,12 @@
 				"vscode-docker-perl.enable": {
 					"type": "boolean",
 					"default": false,
-					"description": "Control whether vscode-docker-perl is enabled for JavaScript files or not."
+					"description": "Control whether vscode-docker-perl is enabled for perl files or not."
 				}
 			}
 		},		
 		"languageWorkers": {
-			"activate": ["onLanguage:javascript", "onLanguage:javascriptreact"],
+			"activate": ["onLanguage:perl"],
 			"executable": {
 				"run": {
 					"nodeModule": "out/extension.js"
