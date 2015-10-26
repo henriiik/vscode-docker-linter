@@ -1,0 +1,45 @@
+{
+	"name": "vscode-docker-perl",
+	"description": "",
+	"version": "0.0.1",
+	"publisher": "",
+	"engines": {
+		"vscode": "*"
+	},
+	"dependencies": {
+		"vscode-languageworker": "*"
+	},
+	"devDependencies": {
+		"typescript": "^1.6.2"
+	},
+	"contributes": {
+		"configuration": {
+			"type": "object",
+			"title": "vscode-docker-perl configuration",
+			"properties": {
+				"vscode-docker-perl.enable": {
+					"type": "boolean",
+					"default": false,
+					"description": "Control whether vscode-docker-perl is enabled for JavaScript files or not."
+				}
+			}
+		},		
+		"languageWorkers": {
+			"activate": ["onLanguage:javascript", "onLanguage:javascriptreact"],
+			"executable": {
+				"run": {
+					"nodeModule": "out/extension.js"
+				},
+				"debug": {
+					"nodeModule": "out/extension.js",
+					"execArgv": ["--nolazy", "--debug=5871"]
+				}
+			},
+			"settings": "vscode-docker-perl"
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "./node_modules/.bin/tsc",
+		"compile": "./node_modules/.bin/tsc -watch -p ./"
+	}
+}
