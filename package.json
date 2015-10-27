@@ -1,5 +1,5 @@
 {
-	"name": "vscode-docker-perl",
+	"name": "docker-linter",
 	"description": "",
 	"version": "0.0.1",
 	"publisher": "henriiik",
@@ -15,12 +15,17 @@
 	"contributes": {
 		"configuration": {
 			"type": "object",
-			"title": "vscode-docker-perl configuration",
+			"title": "docker-linter configuration",
 			"properties": {
-				"vscode-docker-perl.enable": {
+				"docker-linter.perl.machine": {
+					"type": "string",
+					"default": "default",
+					"description": "The name of your docker machine."
+				},
+				"docker-linter.perl.enable": {
 					"type": "boolean",
 					"default": false,
-					"description": "Control whether vscode-docker-perl is enabled for perl files or not."
+					"description": "Control whether docker-linter is enabled for perl files or not."
 				}
 			}
 		},		
@@ -35,7 +40,7 @@
 					"execArgv": ["--nolazy", "--debug=5871"]
 				}
 			},
-			"settings": "vscode-docker-perl"
+			"settings": "docker-linter.perl"
 		}
 	},
 	"scripts": {
