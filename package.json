@@ -2,7 +2,7 @@
 	"name": "vscode-docker-perl",
 	"description": "",
 	"version": "0.0.1",
-	"publisher": "myOrg",
+	"publisher": "henriiik",
 	"engines": {
 		"vscode": "*"
 	},

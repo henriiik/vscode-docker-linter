@@ -1,14 +1,22 @@
 'use strict';
 
+import { runSingleFileValidator, SingleFileValidator, InitializeResponse, IValidationRequestor, IDocument, Diagnostic, Severity, Position, Files } from 'vscode-languageworker';
 import { exec } from 'child_process';
 
-// The module vscode-languageworker contains all the necessary code and typings
-// to implement a language worker for node.
-import { runSingleFileValidator, SingleFileValidator, InitializeResponse, IValidationRequestor, IDocument, Diagnostic, Severity, Position, Files } from 'vscode-languageworker';
+let envString;
+let envObj = {};
+let envRegex = /export (.+)="(.+)"\n/g;
+let root;
 
 let validator: SingleFileValidator = {
 	initialize: (rootFolder: string): Thenable<InitializeResponse> => {
-		return Promise.resolve(null);
+		root = rootFolder;
+		return new Promise<InitializeResponse>((resolve, reject) => {
+			let child = exec('docker-machine env default --shell bash', function(error, stdout, stderr) {
+				envString = stdout.toString();
+				resolve(null);
+			})
+		});
 	},
 	onConfigurationChange(settings: any, requestor: IValidationRequestor): void {
 		// VSCode settings have changed and the requested settings changes
@@ -19,36 +27,31 @@ let validator: SingleFileValidator = {
 	},
 	validate: (document: IDocument): Promise<Diagnostic[]> => {
 		// Validate a single document for diagnostic messages
+		// let match = null;
+		// while (match = envRegex.exec(envString)) {
+		// 	envObj[match[0]] = match[1];
+		// }
+		let match;
+		while (match = envRegex.exec(envString)) {
+			envObj[match[1]] = match[2];
+		}
 		return new Promise<Diagnostic[]>((resolve, reject) => {
 			let child = exec('docker exec perl perl -c -W /root/hello/test.pl', {
-				env: {
-					'DOCKER_TLS_VERIFY': '1',
-					'DOCKER_HOST': 'tcp://192.168.99.100:2376',
-					'DOCKER_CERT_PATH': '/Users/henrik/.docker/machine/machines/default',
-					'DOCKER_MACHINE_NAME': 'default'
-				}
+				env: envObj
 			}, (error, stdout, stderr) => {
 				let result: Diagnostic[] = []
 				let message: string;
 				if (error) {
 					error.message.toString().split('\n').forEach(e => {
-						let hello = e.split(' line ');
-						result.push({
-							start: { line: parseInt(hello[1]), character: 0 },
-							end: { line: parseInt(hello[1]), character: 0 },
-							severity: Severity.Error,
-							message: hello[0]
-						});
-					});
-				} else {
-					stdout.toString().split('\n').forEach(e => {
-						let hello = e.split(' line ');
-						result.push({
-							start: { line: parseInt(hello[1]), character: 0 },
-							end: { line: parseInt(hello[1]), character: 0 },
-							severity: Severity.Error,
-							message: hello[0]
-						});
+						let hello = e.split(' at /root/hello/test.pl line ');
+						if (hello.length > 1) {
+							result.push({
+								start: { line: parseInt(hello[1]), character: 0 },
+								end: { line: parseInt(hello[1]), character: Number.MAX_VALUE },
+								severity: Severity.Error,
+								message: hello[0]
+							});
+						}
 					});
 				}
 				resolve(result)
