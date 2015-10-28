@@ -40,19 +40,22 @@ let validator: SingleFileValidator = {
 		requestor.all();
 	},
 	validate: (document: IDocument): Promise<Diagnostic[]> => {
-		let child = spawn('docker', 'exec perl perl -c -W /root/hello/test.pl'.split(' '), { env });
+		let child = spawn('docker', 'exec -i perl perl -c -W'.split(' '), { env });
+		child.stdin.write(document.getText());
+		child.stdin.end();
+		
 		let result: Diagnostic[] = [];
 		return new Promise<Diagnostic[]>((resolve, reject) => {
 			child.stderr.on('data', (data: Buffer) => {
 				let errStr = data.toString()
 				errStr.split('\n').forEach(line => {
-					let hello = line.split(' line ');
-					if (hello.length > 1) {
+					let match = line.split(' at - line ');
+					if (match.length > 1) {
 						result.push({
-							start: { line: parseInt(hello[1]), character: 0 },
-							end: { line: parseInt(hello[1]), character: Number.MAX_VALUE },
+							start: { line: parseInt(match[1]), character: 0 },
+							end: { line: parseInt(match[1]), character: Number.MAX_VALUE },
 							severity: Severity.Error,
-							message: hello[0]
+							message: match[0]
 						});
 					}
 				});
