@@ -4,79 +4,92 @@ import { runSingleFileValidator, SingleFileValidator, InitializeResponse, IValid
 import { exec, spawn } from 'child_process';
 
 interface Settings {
-	'docker-linter': {
-		perl: {
-			enable: boolean;
-			machine: string;
-		}
-	}
+	machine: string;
+	container: string;
+	command: string;
+	problemMatcher: string;
 }
 
+// Evironment
 let envRegex = /export (.+)="(.+)"\n/g;
-let root: string;
+let problemRegex;
+
+// Defaults
 let machine = "default";
+let container = "docker-linter";
+let command = "perl -c";
+let problemMatcher = "(.*) at (.*) line (\\d+).";
+let defaults: Settings = {
+	machine,
+	container,
+	command,
+	problemMatcher
+}
+
 let settings: Settings;
+
+function getDebugString() {
+	let tmp = settings['docker-linter'];
+	return ['', tmp.machine, tmp.container, tmp.command, tmp.problemMatcher, ''].join('|');
+}
 
 function setMachineEnv() {
 	return new Promise((resolve, reject) => {
 		exec(`docker-machine env ${machine} --shell bash`, function(error, stdout, stderr) {
-			let envString = stdout.toString();
+			let outString = stdout.toString();
 			let match;
-			while (match = envRegex.exec(envString)) {
+			while (match = envRegex.exec(outString)) {
 				process.env[match[1]] = match[2];
 			}
-			resolve()
+			resolve(null);
 		})
 	})
 }
 
 let validator: SingleFileValidator = {
 	initialize: (rootFolder: string): Thenable<InitializeResponse> => {
-		root = rootFolder;
 		return setMachineEnv();
 	},
 	onConfigurationChange(_settings: Settings, requestor: IValidationRequestor): void {
-		machine = _settings['docker-linter'].perl.machine;
-		setMachineEnv();
+		settings = _settings;
 
-		// Request re-validation of all open documents
+		setMachineEnv();
 		requestor.all();
 	},
 	validate: (document: IDocument): Promise<Diagnostic[]> => {
-		let child = spawn('docker', 'exec -i perl perl -c'.split(' '));
+		problemRegex = new RegExp(problemMatcher, 'g');
+		let child = spawn('docker', `exec -i ${container} ${command}`.split(' '));
 		child.stdin.write(document.getText());
 		child.stdin.end();
 
 		let result: Diagnostic[] = [];
 		return new Promise<Diagnostic[]>((resolve, reject) => {
 			child.stderr.on('data', (data: Buffer) => {
-				let errStr = data.toString()
-				result.push({
-					start: { line: 1, character: 0 },
-					end: { line: 1, character: Number.MAX_VALUE },
-					severity: Severity.Error,
-					message: 'ERR!' + errStr
-				});
-				errStr.split('\n').forEach(line => {
-					let match = line.split(' at - line ');
-					if (match.length > 1) {
-						result.push({
-							start: { line: parseInt(match[1]), character: 0 },
-							end: { line: parseInt(match[1]), character: Number.MAX_VALUE },
-							severity: Severity.Error,
-							message: match[0]
-						});
-					}
-				});
-				resolve(result);
-			})
-			child.stdout.on('data', (data: Buffer) => {
-				let outStr = data.toString()
+				let errString = data.toString()
 				result.push({
 					start: { line: 1, character: 0 },
 					end: { line: 1, character: Number.MAX_VALUE },
 					severity: Severity.Warning,
-					message: 'OUT!' + outStr
+					message: 'ERR! ' + getDebugString() + ' ' + errString
+				});
+				let match;
+				while (match = problemRegex.exec(errString)) {
+					result.push({
+						start: { line: parseInt(match[3]), character: 0 },
+						end: { line: parseInt(match[3]), character: Number.MAX_VALUE },
+						severity: Severity.Error,
+						message: match[1]
+					});
+				}
+				resolve(result);
+			})
+			child.stdout.on('data', (data: Buffer) => {
+				let outString = data.toString()
+				result.push({
+					start: { line: 1, character: 0 },
+					end: { line: 1, character: Number.MAX_VALUE },
+					severity: Severity.Warning,
+					message: 'OUT!' + outString
 				});
 				resolve(result);
 			})

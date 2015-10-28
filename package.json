@@ -17,30 +17,50 @@
 			"type": "object",
 			"title": "docker-linter configuration",
 			"properties": {
-				"docker-linter.perl.machine": {
-					"type": "string",
-					"default": "default",
-					"description": "The name of your docker machine."
-				},
-				"docker-linter.perl.enable": {
+				"docker-linter.enable": {
 					"type": "boolean",
 					"default": false,
 					"description": "Control whether docker-linter is enabled for perl files or not."
+				},
+				"docker-linter.machine": {
+					"type": "string",
+					"default": "default",
+					"description": "The name of the docker-machine in which you run your linting container."
+				},
+				"docker-linter.container": {
+					"type": "string",
+					"default": "docker-linter",
+					"description": "The name of the docker container in which the linting command is to be run."
+				},
+				"docker-linter.command": {
+					"type": "string",
+					"default": "perl -c",
+					"description": "The command to which the buffer contents is sent."
+				},
+				"docker-linter.problemMatcher": {
+					"type": "string",
+					"default": "(.*) at (.*) line (\\d+).",
+					"description": "The command to which the buffer contents is sent."
 				}
 			}
-		},		
+		},
 		"languageWorkers": {
-			"activate": ["onLanguage:perl"],
+			"activate": [
+				"onLanguage:perl"
+			],
 			"executable": {
 				"run": {
 					"nodeModule": "out/extension.js"
 				},
 				"debug": {
 					"nodeModule": "out/extension.js",
-					"execArgv": ["--nolazy", "--debug=5871"]
+					"execArgv": [
+						"--nolazy",
+						"--debug=5871"
+					]
 				}
 			},
-			"settings": "docker-linter.perl"
+			"settings": "docker-linter"
 		}
 	},
 	"scripts": {
