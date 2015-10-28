@@ -12,7 +12,6 @@ interface Settings {
 	}
 }
 
-let env = {};
 let envRegex = /export (.+)="(.+)"\n/g;
 let root: string;
 let machine = "default";
@@ -23,9 +22,8 @@ function setMachineEnv() {
 		exec(`docker-machine env ${machine} --shell bash`, function(error, stdout, stderr) {
 			let envString = stdout.toString();
 			let match;
-			env = {};
 			while (match = envRegex.exec(envString)) {
-				env[match[1]] = match[2];
+				process.env[match[1]] = match[2];
 			}
 			resolve()
 		})
@@ -45,7 +43,7 @@ let validator: SingleFileValidator = {
 		requestor.all();
 	},
 	validate: (document: IDocument): Promise<Diagnostic[]> => {
-		let child = spawn('docker', 'exec -i perl perl -c -W'.split(' '), { env });
+		let child = spawn('docker', 'exec -i perl perl -c'.split(' '));
 		child.stdin.write(document.getText());
 		child.stdin.end();
 
@@ -53,6 +51,12 @@ let validator: SingleFileValidator = {
 		return new Promise<Diagnostic[]>((resolve, reject) => {
 			child.stderr.on('data', (data: Buffer) => {
 				let errStr = data.toString()
+				result.push({
+					start: { line: 1, character: 0 },
+					end: { line: 1, character: Number.MAX_VALUE },
+					severity: Severity.Error,
+					message: 'ERR!' + errStr
+				});
 				errStr.split('\n').forEach(line => {
 					let match = line.split(' at - line ');
 					if (match.length > 1) {
@@ -63,6 +67,16 @@ let validator: SingleFileValidator = {
 							message: match[0]
 						});
 					}
+				});
+				resolve(result);
+			})
+			child.stdout.on('data', (data: Buffer) => {
+				let outStr = data.toString()
+				result.push({
+					start: { line: 1, character: 0 },
+					end: { line: 1, character: Number.MAX_VALUE },
+					severity: Severity.Warning,
+					message: 'OUT!' + outStr
 				});
 				resolve(result);
 			})
