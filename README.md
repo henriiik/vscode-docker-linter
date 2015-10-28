@@ -8,6 +8,6 @@ docker run --rm -it --name=perl --volume=/Users/henrik/Development/playground:/r
 ```
 ## Windows
 ```
-code --extensionDevelopmentPath=C:\Users\henro\Documents\GitHub\vscode-docker-perl --debugLanguageWorker=henriiik.vscode-docker-perl
+code --extensionDevelopmentPath=C:\GitHub\docker-linter --debugLanguageWorker=henriiik.docker-linter
 docker run -it --rm --name perl --volume=/c/Users/playground:/root/hello perl bash
 ```
