@@ -29,7 +29,7 @@ let defaults: Settings = {
 let settings: Settings;
 
 function getDebugString() {
-	let tmp = settings['docker-linter'];
+	let tmp = settings;
 	return ['', tmp.machine, tmp.container, tmp.command, tmp.problemMatcher, ''].join('|');
 }
 
@@ -50,15 +50,16 @@ let validator: SingleFileValidator = {
 	initialize: (rootFolder: string): Thenable<InitializeResponse> => {
 		return setMachineEnv();
 	},
-	onConfigurationChange(_settings: Settings, requestor: IValidationRequestor): void {
-		settings = _settings;
+	onConfigurationChange(_settings: {'docker-linter': Settings}, requestor: IValidationRequestor): void {
+		settings = _settings['docker-linter'];
 
 		setMachineEnv();
 		requestor.all();
 	},
 	validate: (document: IDocument): Promise<Diagnostic[]> => {
 		problemRegex = new RegExp(problemMatcher, 'g');
-		let child = spawn('docker', `exec -i ${container} ${command}`.split(' '));
+		let cmd = settings.command || command;
+		let child = spawn('docker', `exec -i ${container} ${cmd}`.split(' '));
 		child.stdin.write(document.getText());
 		child.stdin.end();
 
@@ -70,7 +71,7 @@ let validator: SingleFileValidator = {
 					start: { line: 1, character: 0 },
 					end: { line: 1, character: Number.MAX_VALUE },
 					severity: Severity.Warning,
-					message: 'ERR! ' + getDebugString() + ' ' + errString
+					message: 'ERR! ' + cmd + getDebugString() + ' ' + errString
 				});
 				let match;
 				while (match = problemRegex.exec(errString)) {
