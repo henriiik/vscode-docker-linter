@@ -3,21 +3,16 @@
 import { runSingleFileValidator, SingleFileValidator, InitializeResponse, IValidationRequestor, IDocument, Diagnostic, Severity, Position, Files } from "vscode-languageworker";
 import { exec, spawn } from "child_process";
 
-interface Settings {
-	machine?: string;
-	container?: string;
-	command?: string;
-	problemMatcher?: string;
-}
+import { DockerLinterSettings, makeValidator } from "./docker-linter";
 
-let defaults: Settings = {
+let defaults: DockerLinterSettings = {
 	machine: "default",
 	container: "docker-linter",
 	command: "perl -c",
 	problemMatcher: "(.*) at ([^ ]*) line (\\d+)[.,]"
 };
 
-let settings: Settings = {};
+let settings: DockerLinterSettings = {};
 
 // Helpers
 function getSetting(name: string): string {
@@ -25,7 +20,7 @@ function getSetting(name: string): string {
 }
 
 function getDebugString(out: string): string {
-	return [getSetting("machine"), getSetting("container"), getSetting("command"), getSetting("problemMatcher"), out].join(" | ");
+	return [makeValidator(), getSetting("machine"), getSetting("container"), getSetting("command"), getSetting("problemMatcher"), out].join(" | ");
 }
 
 function getDiagnostic(message: string, line: number, start: number, end: number, severity: number): Diagnostic {
