@@ -12,7 +12,6 @@ interface Settings {
 
 // Evironment
 let envRegex = /export (.+)="(.+)"\n/g;
-let problemRegex;
 
 // Defaults
 let machine = "default";
@@ -35,14 +34,37 @@ function getSetting(name: string) {
 	return settings[name] || defaults[name];
 }
 
-function getDebugString() {
-	let tmp = settings;
-	return ["", getSetting("machine"), getSetting("container"), getSetting("command"), getSetting("problemMatcher"), ""].join("|");
+function getDebugString(out: string) {
+	return [getSetting("machine"), getSetting("container"), getSetting("command"), getSetting("problemMatcher"), out].join(" | ");
+}
+
+function getDiagnostic(message: string, line: number, start: number, end: number, severity: number): Diagnostic {
+	return {
+		start: { line, character: start },
+		end: { line, character: end },
+		severity,
+		message
+	};
+}
+
+function parseBuffer(buffer: Buffer): Diagnostic[] {
+	let result: Diagnostic[] = [];
+	let errString = buffer.toString();
+	let problemRegex = new RegExp(getSetting("problemMatcher"), "g");
+
+	result.push(getDiagnostic(getDebugString(errString), 1, 0, Number.MAX_VALUE, Severity.Warning));
+
+	let match;
+	while (match = problemRegex.exec(errString)) {
+		result.push(getDiagnostic(match[1], match[3], 0, Number.MAX_VALUE, Severity.Error));
+	}
+
+	return result;
 }
 
 function setMachineEnv() {
 	return new Promise((resolve, reject) => {
-		exec(`docker-machine env ${getSetting("machine")} --shell bash`, function(error, stdout, stderr) {
+		exec(`docker-machine env ${getSetting("machine") } --shell bash`, function(error, stdout, stderr) {
 			let outString = stdout.toString();
 			let match;
 			while (match = envRegex.exec(outString)) {
@@ -65,41 +87,16 @@ let validator: SingleFileValidator = {
 		requestor.all();
 	},
 	validate: (document: IDocument): Promise<Diagnostic[]> => {
-		problemRegex = new RegExp(getSetting("problemMatcher"), "g");
-		let child = spawn("docker", `exec -i ${getSetting("container")} ${getSetting("command")}`.split(" "));
+		let child = spawn("docker", `exec -i ${getSetting("container") } ${getSetting("command") }`.split(" "));
 		child.stdin.write(document.getText());
 		child.stdin.end();
 
-		let result: Diagnostic[] = [];
 		return new Promise<Diagnostic[]>((resolve, reject) => {
 			child.stderr.on("data", (data: Buffer) => {
-				let errString = data.toString();
-				result.push({
-					start: { line: 1, character: 0 },
-					end: { line: 1, character: Number.MAX_VALUE },
-					severity: Severity.Warning,
-					message: "ERR! " + getDebugString() + " " + errString
-				});
-				let match;
-				while (match = problemRegex.exec(errString)) {
-					result.push({
-						start: { line: parseInt(match[3]), character: 0 },
-						end: { line: parseInt(match[3]), character: Number.MAX_VALUE },
-						severity: Severity.Error,
-						message: match[1]
-					});
-				}
-				resolve(result);
+				resolve(parseBuffer(data));
 			});
 			child.stdout.on("data", (data: Buffer) => {
-				let outString = data.toString();
-				result.push({
-					start: { line: 1, character: 0 },
-					end: { line: 1, character: Number.MAX_VALUE },
-					severity: Severity.Warning,
-					message: "OUT!" + outString
-				});
-				resolve(result);
+				resolve(parseBuffer(data));
 			});
 		});
 	}
