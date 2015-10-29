@@ -4,10 +4,10 @@ import { runSingleFileValidator, SingleFileValidator, InitializeResponse, IValid
 import { exec, spawn } from 'child_process';
 
 interface Settings {
-	machine: string;
-	container: string;
-	command: string;
-	problemMatcher: string;
+	machine?: string;
+	container?: string;
+	command?: string;
+	problemMatcher?: string;
 }
 
 // Evironment
@@ -18,7 +18,9 @@ let problemRegex;
 let machine = "default";
 let container = "docker-linter";
 let command = "perl -c";
-let problemMatcher = "(.*) at (.*) line (\\d+).";
+let problemMatcher = "(.*) at ([^ ]*) line (\\d+)[.,]";
+
+// Settings
 let defaults: Settings = {
 	machine,
 	container,
@@ -26,16 +28,21 @@ let defaults: Settings = {
 	problemMatcher
 }
 
-let settings: Settings;
+let settings: Settings = {};
+
+// Helpers
+function getSetting(name: string) {
+	return settings[name] || defaults[name];
+}
 
 function getDebugString() {
 	let tmp = settings;
-	return ['', tmp.machine, tmp.container, tmp.command, tmp.problemMatcher, ''].join('|');
+	return ['', getSetting("machine"), getSetting("container"), getSetting("command"), getSetting("problemMatcher"), ''].join('|');
 }
 
 function setMachineEnv() {
 	return new Promise((resolve, reject) => {
-		exec(`docker-machine env ${machine} --shell bash`, function(error, stdout, stderr) {
+		exec(`docker-machine env ${getSetting("machine")} --shell bash`, function(error, stdout, stderr) {
 			let outString = stdout.toString();
 			let match;
 			while (match = envRegex.exec(outString)) {
@@ -46,20 +53,20 @@ function setMachineEnv() {
 	})
 }
 
+// Validator
 let validator: SingleFileValidator = {
 	initialize: (rootFolder: string): Thenable<InitializeResponse> => {
 		return setMachineEnv();
 	},
-	onConfigurationChange(_settings: {'docker-linter': Settings}, requestor: IValidationRequestor): void {
-		settings = _settings['docker-linter'];
+	onConfigurationChange(_settings: { 'docker-linter': Settings }, requestor: IValidationRequestor): void {
+		settings = (_settings['docker-linter'] || {});
 
 		setMachineEnv();
 		requestor.all();
 	},
 	validate: (document: IDocument): Promise<Diagnostic[]> => {
-		problemRegex = new RegExp(problemMatcher, 'g');
-		let cmd = settings.command || command;
-		let child = spawn('docker', `exec -i ${container} ${cmd}`.split(' '));
+		problemRegex = new RegExp(getSetting("problemMatcher"), 'g');
+		let child = spawn('docker', `exec -i ${getSetting("container")} ${getSetting("command")}`.split(' '));
 		child.stdin.write(document.getText());
 		child.stdin.end();
 
@@ -71,7 +78,7 @@ let validator: SingleFileValidator = {
 					start: { line: 1, character: 0 },
 					end: { line: 1, character: Number.MAX_VALUE },
 					severity: Severity.Warning,
-					message: 'ERR! ' + cmd + getDebugString() + ' ' + errString
+					message: 'ERR! ' + getDebugString() + ' ' + errString
 				});
 				let match;
 				while (match = problemRegex.exec(errString)) {

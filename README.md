@@ -10,5 +10,5 @@ docker run --rm -it --name=docker-linter --volume=/Users/henrik/Development/play
 ## Windows
 ```
 code --extensionDevelopmentPath=C:\GitHub\docker-linter --debugLanguageWorker=henriiik.docker-linter
-docker run -it --rm --name docker-linter --volume=/c/Users/playground:/root/hello perl bash
+docker run -it --rm --name=docker-linter --volume=/c/Users/playground:/root/hello perl bash
 ```
