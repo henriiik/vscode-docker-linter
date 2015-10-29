@@ -73,7 +73,7 @@ let validator: SingleFileValidator = {
 	initialize: (rootFolder: string): Thenable<InitializeResponse> => {
 		return setMachineEnv();
 	},
-	onConfigurationChange(_settings: { "docker-linter": Settings }, requestor: IValidationRequestor): void {
+	onConfigurationChange: (_settings: { "docker-linter": Settings }, requestor: IValidationRequestor): void => {
 		settings = (_settings["docker-linter"] || {});
 
 		setMachineEnv();
