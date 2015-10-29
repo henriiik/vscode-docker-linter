@@ -10,31 +10,21 @@ interface Settings {
 	problemMatcher?: string;
 }
 
-// Evironment
-let envRegex = /export (.+)="(.+)"\n/g;
-
-// Defaults
-let machine = "default";
-let container = "docker-linter";
-let command = "perl -c";
-let problemMatcher = "(.*) at ([^ ]*) line (\\d+)[.,]";
-
-// Settings
 let defaults: Settings = {
-	machine,
-	container,
-	command,
-	problemMatcher
+	machine: "default",
+	container: "docker-linter",
+	command: "perl -c",
+	problemMatcher: "(.*) at ([^ ]*) line (\\d+)[.,]"
 };
 
 let settings: Settings = {};
 
 // Helpers
-function getSetting(name: string) {
+function getSetting(name: string): string {
 	return settings[name] || defaults[name];
 }
 
-function getDebugString(out: string) {
+function getDebugString(out: string): string {
 	return [getSetting("machine"), getSetting("container"), getSetting("command"), getSetting("problemMatcher"), out].join(" | ");
 }
 
@@ -62,14 +52,17 @@ function parseBuffer(buffer: Buffer): Diagnostic[] {
 	return result;
 }
 
-function setMachineEnv() {
+function setMachineEnv(): Thenable<InitializeResponse> {
 	return new Promise((resolve, reject) => {
 		exec(`docker-machine env ${getSetting("machine") } --shell bash`, function(error, stdout, stderr) {
 			let outString = stdout.toString();
+			let envRegex = /export (.+)="(.+)"\n/g;
+
 			let match;
 			while (match = envRegex.exec(outString)) {
 				process.env[match[1]] = match[2];
 			}
+
 			resolve(null);
 		});
 	});
