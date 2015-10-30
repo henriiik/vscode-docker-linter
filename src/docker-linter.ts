@@ -34,8 +34,8 @@ function setMachineEnv(machine: string): Thenable<InitializeResponse> {
 }
 
 export class DockerLinterValidator implements SingleFileValidator {
-	defaults: DockerLinterSettings;
-	settings: DockerLinterSettings;
+	private defaults: DockerLinterSettings;
+	private settings: DockerLinterSettings;
 
 	constructor(defaults: DockerLinterSettings) {
 		this.defaults = defaults;
@@ -46,19 +46,19 @@ export class DockerLinterValidator implements SingleFileValidator {
 		return this.settings[name] || this.defaults[name];
 	};
 
-	getDebugString = (out: string): string => {
-		return [this.getSetting("machine"), this.getSetting("container"), this.getSetting("command"), this.getSetting("problemMatcher"), out].join(" | ");
+	getDebugString = (): string => {
+		return [this.getSetting("machine"), this.getSetting("container"), this.getSetting("command"), this.getSetting("problemMatcher"), ""].join(" | ");
 	};
 
 	parseBuffer = (buffer: Buffer) => {
 		let result: Diagnostic[] = [];
-		let errString = buffer.toString();
+		let out = buffer.toString();
 		let problemRegex = new RegExp(this.getSetting("problemMatcher"), "g");
 
-		result.push(getDiagnostic(this.getDebugString(errString), 1, 0, Number.MAX_VALUE, Severity.Info));
+		result.push(getDiagnostic(this.getDebugString() + out, 1, 0, Number.MAX_VALUE, Severity.Info));
 
 		let match;
-		while (match = problemRegex.exec(errString)) {
+		while (match = problemRegex.exec(out)) {
 			result.push(getDiagnostic(match[1], match[3], 0, Number.MAX_VALUE, Severity.Error));
 		}
 
