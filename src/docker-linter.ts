@@ -1,4 +1,5 @@
 import { runSingleFileValidator, SingleFileValidator, InitializeResponse, IValidationRequestor, IDocument, Diagnostic, Severity, Position, Files } from "vscode-languageworker";
+import { exec, spawn } from "child_process";
 
 export interface DockerLinterSettings {
 	machine?: string;
@@ -7,13 +8,86 @@ export interface DockerLinterSettings {
 	problemMatcher?: string;
 }
 
-export class DockerLinterValidator {
-	defaults: DockerLinterSettings;
-	constructor(defaults: DockerLinterSettings) {
-		this.defaults = defaults;
-	}
+function getDiagnostic(message: string, line: number, start: number, end: number, severity: number): Diagnostic {
+	return {
+		start: { line, character: start },
+		end: { line, character: end },
+		severity,
+		message
+	};
 }
 
-export function makeValidator() {
-	return "hello!";
+function setMachineEnv(machine: string): Thenable<InitializeResponse> {
+	return new Promise((resolve, reject) => {
+		exec(`docker-machine env ${machine} --shell bash`, function(error, stdout, stderr) {
+			let outString = stdout.toString();
+			let envRegex = /export (.+)="(.+)"\n/g;
+
+			let match;
+			while (match = envRegex.exec(outString)) {
+				process.env[match[1]] = match[2];
+			}
+
+			resolve(null);
+		});
+	});
+}
+
+export class DockerLinterValidator implements SingleFileValidator {
+	defaults: DockerLinterSettings;
+	settings: DockerLinterSettings;
+
+	constructor(defaults: DockerLinterSettings) {
+		this.defaults = defaults;
+		this.settings = {};
+	}
+
+	getSetting = (name: string): string => {
+		return this.settings[name] || this.defaults[name];
+	};
+
+	getDebugString = (out: string): string => {
+		return [this.getSetting("machine"), this.getSetting("container"), this.getSetting("command"), this.getSetting("problemMatcher"), out].join(" | ");
+	};
+
+	parseBuffer = (buffer: Buffer) => {
+		let result: Diagnostic[] = [];
+		let errString = buffer.toString();
+		let problemRegex = new RegExp(this.getSetting("problemMatcher"), "g");
+
+		result.push(getDiagnostic(this.getDebugString(errString), 1, 0, Number.MAX_VALUE, Severity.Info));
+
+		let match;
+		while (match = problemRegex.exec(errString)) {
+			result.push(getDiagnostic(match[1], match[3], 0, Number.MAX_VALUE, Severity.Error));
+		}
+
+		return result;
+	};
+
+	initialize = (rootFolder: string): Thenable<InitializeResponse> => {
+		return setMachineEnv(this.getSetting("machine"));
+	};
+
+	onConfigurationChange = (_settings: { "docker-linter": DockerLinterSettings }, requestor: IValidationRequestor): void => {
+		this.settings = (_settings["docker-linter"] || {});
+
+		setMachineEnv(this.getSetting("machine"));
+		requestor.all();
+	};
+
+	validate = (document: IDocument): Promise<Diagnostic[]> => {
+		let child = spawn("docker", `exec -i ${this.getSetting("container") } ${this.getSetting("command") }`.split(" "));
+		child.stdin.write(document.getText());
+		child.stdin.end();
+
+		return new Promise<Diagnostic[]>((resolve, reject) => {
+			child.stderr.on("data", (data: Buffer) => {
+				resolve(this.parseBuffer(data));
+			});
+			child.stdout.on("data", (data: Buffer) => {
+				resolve(this.parseBuffer(data));
+			});
+		});
+	};
 }
