@@ -37,7 +37,7 @@ function parseBuffer(buffer: Buffer): Diagnostic[] {
 	let errString = buffer.toString();
 	let problemRegex = new RegExp(getSetting("problemMatcher"), "g");
 
-	result.push(getDiagnostic(getDebugString(errString), 1, 0, Number.MAX_VALUE, Severity.Warning));
+	result.push(getDiagnostic(getDebugString(errString), 1, 0, Number.MAX_VALUE, Severity.Info));
 
 	let match;
 	while (match = problemRegex.exec(errString)) {
@@ -68,7 +68,7 @@ let validator: SingleFileValidator = {
 	initialize: (rootFolder: string): Thenable<InitializeResponse> => {
 		return setMachineEnv();
 	},
-	onConfigurationChange: (_settings: { "docker-linter": Settings }, requestor: IValidationRequestor): void => {
+	onConfigurationChange: (_settings: { "docker-linter": DockerLinterSettings }, requestor: IValidationRequestor): void => {
 		settings = (_settings["docker-linter"] || {});
 
 		setMachineEnv();
