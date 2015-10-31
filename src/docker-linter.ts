@@ -2,6 +2,7 @@ import { runSingleFileValidator, SingleFileValidator, InitializeResponse, IValid
 import { exec, spawn } from "child_process";
 
 export interface DockerLinterSettings {
+	[index: string]: string;
 	machine?: string;
 	container?: string;
 	command?: string;
@@ -23,7 +24,7 @@ function setMachineEnv(machine: string): Thenable<InitializeResponse> {
 			let outString = stdout.toString();
 			let envRegex = /export (.+)="(.+)"\n/g;
 
-			let match;
+			let match: RegExpExecArray;
 			while (match = envRegex.exec(outString)) {
 				process.env[match[1]] = match[2];
 			}
@@ -57,9 +58,9 @@ export class DockerLinterValidator implements SingleFileValidator {
 
 		result.push(getDiagnostic(this.getDebugString() + out, 1, 0, Number.MAX_VALUE, Severity.Info));
 
-		let match;
+		let match: RegExpExecArray;
 		while (match = problemRegex.exec(out)) {
-			result.push(getDiagnostic(match[1], match[3], 0, Number.MAX_VALUE, Severity.Error));
+			result.push(getDiagnostic(match[1], parseInt(match[3], 10), 0, Number.MAX_VALUE, Severity.Error));
 		}
 
 		return result;
