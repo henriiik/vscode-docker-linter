@@ -7,7 +7,7 @@ let perlDefaults: DockerLinterSettings = {
 	machine: "default",
 	container: "docker-linter",
 	command: "perl -c",
-	problemMatcher: "(.*) at ([^ ]*) line (\\d+)[.,]"
+	regexp: "(.*) at ([^ ]*) line (\\d+)[.,]"
 };
 
 let perlValidator = new DockerLinterValidator(perlDefaults);

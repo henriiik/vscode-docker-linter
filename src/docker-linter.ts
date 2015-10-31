@@ -2,11 +2,15 @@ import { runSingleFileValidator, SingleFileValidator, InitializeResponse, IValid
 import { exec, spawn } from "child_process";
 
 export interface DockerLinterSettings {
-	[index: string]: string;
-	machine?: string;
-	container?: string;
-	command?: string;
-	problemMatcher?: string;
+	machine: string;
+	container: string;
+	command: string;
+	regexp: string;
+	line?: string;
+	column?: string;
+	severity?: string;
+	message?: string;
+	code?: string;
 }
 
 function getDiagnostic(message: string, line: number, start: number, end: number, severity: number): Diagnostic {
@@ -35,26 +39,32 @@ function setMachineEnv(machine: string): Thenable<InitializeResponse> {
 }
 
 export class DockerLinterValidator implements SingleFileValidator {
-	private defaults: DockerLinterSettings;
 	private settings: DockerLinterSettings;
 
 	constructor(defaults: DockerLinterSettings) {
-		this.defaults = defaults;
-		this.settings = {};
+		this.settings = defaults;
 	}
 
-	getSetting = (name: string): string => {
-		return this.settings[name] || this.defaults[name];
+	updateSettings = (settings: DockerLinterSettings) => {
+		this.settings.machine = settings.machine || this.settings.machine;
+		this.settings.container = settings.container || this.settings.container;
+		this.settings.command = settings.command || this.settings.command;
+		this.settings.regexp = settings.regexp || this.settings.regexp;
+		this.settings.line = settings.line || this.settings.line;
+		this.settings.column = settings.column || this.settings.column;
+		this.settings.severity = settings.severity || this.settings.severity;
+		this.settings.message = settings.message || this.settings.message;
+		this.settings.code = settings.code || this.settings.code;
 	};
 
 	getDebugString = (): string => {
-		return [this.getSetting("machine"), this.getSetting("container"), this.getSetting("command"), this.getSetting("problemMatcher"), ""].join(" | ");
+		return [this.settings.machine, this.settings.container, this.settings.command, this.settings.regexp, ""].join(" | ");
 	};
 
 	parseBuffer = (buffer: Buffer) => {
 		let result: Diagnostic[] = [];
 		let out = buffer.toString();
-		let problemRegex = new RegExp(this.getSetting("problemMatcher"), "g");
+		let problemRegex = new RegExp(this.settings.regexp, "g");
 
 		result.push(getDiagnostic(this.getDebugString() + out, 1, 0, Number.MAX_VALUE, Severity.Info));
 
@@ -67,18 +77,20 @@ export class DockerLinterValidator implements SingleFileValidator {
 	};
 
 	initialize = (rootFolder: string): Thenable<InitializeResponse> => {
-		return setMachineEnv(this.getSetting("machine"));
+		return setMachineEnv(this.settings.machine);
 	};
 
 	onConfigurationChange = (_settings: { "docker-linter": DockerLinterSettings }, requestor: IValidationRequestor): void => {
-		this.settings = (_settings["docker-linter"] || {});
+		if (_settings["docker-linter"]) {
+			this.updateSettings(_settings["docker-linter"]);
+		}
 
-		setMachineEnv(this.getSetting("machine"));
+		setMachineEnv(this.settings.machine);
 		requestor.all();
 	};
 
 	validate = (document: IDocument): Promise<Diagnostic[]> => {
-		let child = spawn("docker", `exec -i ${this.getSetting("container") } ${this.getSetting("command") }`.split(" "));
+		let child = spawn("docker", `exec -i ${this.settings.container } ${this.settings.command }`.split(" "));
 		child.stdin.write(document.getText());
 		child.stdin.end();
 

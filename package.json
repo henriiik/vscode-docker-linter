@@ -38,7 +38,7 @@
           "default": "perl -c",
           "description": "The command to which the buffer contents is sent."
         },
-        "docker-linter.problemMatcher": {
+        "docker-linter.regex": {
           "type": "string",
           "default": "(.*) at (.*) line (\\d+).",
           "description": "The command to which the buffer contents is sent."
