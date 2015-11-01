@@ -23,8 +23,17 @@ function getDebugDiagnostic(message: string): Diagnostic {
 }
 
 function setMachineEnv(machine: string): Thenable<InitializeResponse> {
-	return new Promise((resolve, reject) => {
+	return new Promise<InitializeResponse>((resolve, reject) => {
 		exec(`docker-machine env ${machine} --shell bash`, function(error, stdout, stderr) {
+			if (error) {
+				let errString = stderr.toString();
+				resolve({
+					success: false,
+					message: errString,
+					retry: false
+				});
+			}
+
 			let outString = stdout.toString();
 			let envRegex = /export (.+)="(.+)"\n/g;
 
@@ -33,7 +42,7 @@ function setMachineEnv(machine: string): Thenable<InitializeResponse> {
 				process.env[match[1]] = match[2];
 			}
 
-			resolve(null);
+			resolve({ success: true });
 		});
 	});
 }
@@ -136,6 +145,7 @@ export class DockerLinterValidator implements SingleFileValidator {
 		return new Promise<Diagnostic[]>((resolve, reject) => {
 			let result: Diagnostic[] = [];
 			let debugString = "";
+
 			child.stderr.on("data", (data: Buffer) => {
 				debugString += data.toString();
 				result = result.concat(this.parseBuffer(data));
@@ -147,7 +157,7 @@ export class DockerLinterValidator implements SingleFileValidator {
 			});
 
 			child.on("close", (code: string) => {
-				result.push(getDebugDiagnostic(this.getDebugString(debugString)));
+				result.push(getDebugDiagnostic(code + " | " + this.getDebugString(debugString)));
 				resolve(result);
 			});
 		});
