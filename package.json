@@ -4,6 +4,9 @@
   "version": "0.0.2",
   "publisher": "henriiik",
   "author": "Henrik Sjööh <hello@enhenrik.nu> (http://www.enhenrik.nu)",
+  "license": "MIT",
+  "main": "./lib/docker-linter.js",
+  "typings": "./lib/docker-linter",
   "engines": {
     "vscode": "*"
   },
