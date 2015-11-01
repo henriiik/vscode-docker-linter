@@ -13,11 +13,11 @@ export interface DockerLinterSettings {
 	code: number;
 }
 
-function getDiagnostic(message: string, line: number, start: number, end: number, severity: number): Diagnostic {
+function getDebugDiagnostic(message: string): Diagnostic {
 	return {
-		start: { line, character: start },
-		end: { line, character: end },
-		severity,
+		start: { line: 1, character: 0 },
+		end: { line: 1, character: Number.MAX_VALUE },
+		severity: Severity.Info,
 		message
 	};
 }
@@ -63,8 +63,8 @@ export class DockerLinterValidator implements SingleFileValidator {
 		this.settings.severity = isInteger(settings.severity) ? settings.severity : this.settings.severity;
 	};
 
-	getDebugString = (): string => {
-		return [this.settings.machine, this.settings.container, this.settings.command, this.settings.regexp, ""].join(" | ");
+	getDebugString = (extra: string): string => {
+		return [this.settings.machine, this.settings.container, this.settings.command, this.settings.regexp, extra].join(" | ");
 	};
 
 	getDiagnostic = (match: RegExpExecArray): Diagnostic => {
@@ -107,7 +107,7 @@ export class DockerLinterValidator implements SingleFileValidator {
 		let out = buffer.toString();
 		let problemRegex = new RegExp(this.settings.regexp, "g");
 
-		result.push(getDiagnostic(this.getDebugString() + out, 1, 0, Number.MAX_VALUE, Severity.Info));
+		result.push(getDebugDiagnostic(this.getDebugString(out)));
 
 		let match: RegExpExecArray;
 		while (match = problemRegex.exec(out)) {
