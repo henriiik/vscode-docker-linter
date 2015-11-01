@@ -8,9 +8,9 @@ export interface DockerLinterSettings {
 	regexp: string;
 	line: number;
 	column: number;
-	severity?: number;
+	severity: number;
 	message: number;
-	code?: number;
+	code: number;
 }
 
 function getDiagnostic(message: string, line: number, start: number, end: number, severity: number): Diagnostic {
@@ -69,18 +69,37 @@ export class DockerLinterValidator implements SingleFileValidator {
 
 	getDiagnostic = (match: RegExpExecArray): Diagnostic => {
 		let line = parseInt(match[this.settings.line], 10);
+
 		let start = 0;
 		let end = Number.MAX_VALUE;
 		if (this.settings.column) {
 			start = end = parseInt(match[this.settings.column], 10);
 		}
+
 		let severity = Severity.Error;
-		return {
+		if (this.settings.severity) {
+			switch (match[this.settings.severity]) {
+				case "warning":
+					severity = Severity.Warning;
+					break;
+				case "info":
+					severity = Severity.Info;
+					break;
+			}
+		}
+
+		let diagnostic: Diagnostic = {
 			start: { line, character: start },
 			end: { line, character: end },
 			severity,
 			message: match[this.settings.message]
 		};
+
+		if (this.settings.code) {
+			diagnostic.code = match[this.settings.code];
+		}
+
+		return diagnostic;
 	};
 
 	parseBuffer = (buffer: Buffer) => {

@@ -57,6 +57,16 @@
           "type": "number",
           "default": 0,
           "description": "The number of the group that matches the column."
+        },
+        "docker-linter.severity": {
+          "type": "number",
+          "default": 0,
+          "description": "The number of the group that matches the severity."
+        },
+        "docker-linter.code": {
+          "type": "number",
+          "default": 0,
+          "description": "The number of the group that matches the code."
         }
       }
     },
