@@ -1,5 +1,5 @@
 # Docker Linter
-lint your shit in docker
+Lint your suff in your containers.
 
 ## OSX
 ```
