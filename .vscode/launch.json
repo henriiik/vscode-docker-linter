@@ -10,7 +10,7 @@
 			"address": "localhost",
 			// Port to attach to.
 			"port": 5871,
-			"outDir": "out",
+			"outDir": "lib",
 			"sourceMaps": true
 		}
 	]

@@ -3,6 +3,7 @@
   "description": "",
   "version": "0.0.1",
   "publisher": "henriiik",
+  "author": "Henrik Sjööh <hello@enhenrik.nu> (http://www.enhenrik.nu)",
   "engines": {
     "vscode": "*"
   },
@@ -77,10 +78,10 @@
       ],
       "executable": {
         "run": {
-          "nodeModule": "out/extension.js"
+          "nodeModule": "lib/extension.js"
         },
         "debug": {
-          "nodeModule": "out/extension.js",
+          "nodeModule": "lib/extension.js",
           "execArgv": [
             "--nolazy",
             "--debug=5871"
