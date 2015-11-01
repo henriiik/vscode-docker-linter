@@ -6,11 +6,11 @@ export interface DockerLinterSettings {
 	container: string;
 	command: string;
 	regexp: string;
-	line?: string;
-	column?: string;
-	severity?: string;
-	message?: string;
-	code?: string;
+	line: number;
+	column: number;
+	severity?: number;
+	message: number;
+	code?: number;
 }
 
 function getDiagnostic(message: string, line: number, start: number, end: number, severity: number): Diagnostic {
@@ -38,6 +38,10 @@ function setMachineEnv(machine: string): Thenable<InitializeResponse> {
 	});
 }
 
+function isInteger(value: number) {
+	return isFinite(value) && Math.floor(value) === value;
+}
+
 export class DockerLinterValidator implements SingleFileValidator {
 	private settings: DockerLinterSettings;
 
@@ -50,15 +54,33 @@ export class DockerLinterValidator implements SingleFileValidator {
 		this.settings.container = settings.container || this.settings.container;
 		this.settings.command = settings.command || this.settings.command;
 		this.settings.regexp = settings.regexp || this.settings.regexp;
+
 		this.settings.line = settings.line || this.settings.line;
-		this.settings.column = settings.column || this.settings.column;
-		this.settings.severity = settings.severity || this.settings.severity;
 		this.settings.message = settings.message || this.settings.message;
-		this.settings.code = settings.code || this.settings.code;
+
+		this.settings.code = isInteger(settings.code) ? settings.code : this.settings.code;
+		this.settings.column = isInteger(settings.column) ? settings.column : this.settings.column;
+		this.settings.severity = isInteger(settings.severity) ? settings.severity : this.settings.severity;
 	};
 
 	getDebugString = (): string => {
 		return [this.settings.machine, this.settings.container, this.settings.command, this.settings.regexp, ""].join(" | ");
+	};
+
+	getDiagnostic = (match: RegExpExecArray): Diagnostic => {
+		let line = parseInt(match[this.settings.line], 10);
+		let start = 0;
+		let end = Number.MAX_VALUE;
+		if (this.settings.column) {
+			start = end = parseInt(match[this.settings.column], 10);
+		}
+		let severity = Severity.Error;
+		return {
+			start: { line, character: start },
+			end: { line, character: end },
+			severity,
+			message: match[this.settings.message]
+		};
 	};
 
 	parseBuffer = (buffer: Buffer) => {
@@ -70,7 +92,7 @@ export class DockerLinterValidator implements SingleFileValidator {
 
 		let match: RegExpExecArray;
 		while (match = problemRegex.exec(out)) {
-			result.push(getDiagnostic(match[1], parseInt(match[3], 10), 0, Number.MAX_VALUE, Severity.Error));
+			result.push(this.getDiagnostic(match));
 		}
 
 		return result;

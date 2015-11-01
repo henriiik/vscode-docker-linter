@@ -40,8 +40,23 @@
         },
         "docker-linter.regex": {
           "type": "string",
-          "default": "(.*) at (.*) line (\\d+).",
-          "description": "The command to which the buffer contents is sent."
+          "default": "(.*) at ([^ ]*) line (\\d+)[.,]",
+          "description": "The regex that is is used to match for errors."
+        },
+        "docker-linter.message": {
+          "type": "number",
+          "default": 1,
+          "description": "The number of the group that matches the error."
+        },
+        "docker-linter.line": {
+          "type": "number",
+          "default": 3,
+          "description": "The number of the group that matches the line."
+        },
+        "docker-linter.column": {
+          "type": "number",
+          "default": 0,
+          "description": "The number of the group that matches the column."
         }
       }
     },
