@@ -1,7 +1,7 @@
 {
   "name": "docker-linter",
   "description": "",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "henriiik",
   "author": "Henrik Sjööh <hello@enhenrik.nu> (http://www.enhenrik.nu)",
   "license": "MIT",

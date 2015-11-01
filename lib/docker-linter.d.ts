@@ -12,14 +12,13 @@ export interface DockerLinterSettings {
 }
 export declare class DockerLinterValidator implements SingleFileValidator {
     private settings;
-    constructor(defaults: DockerLinterSettings);
+    private settingsKey;
+    constructor(defaults: DockerLinterSettings, settingsKey: string);
     updateSettings: (settings: DockerLinterSettings) => void;
     getDebugString: (extra: string) => string;
     getDiagnostic: (match: RegExpExecArray) => Diagnostic;
     parseBuffer: (buffer: Buffer) => Diagnostic[];
     initialize: (rootFolder: string) => Thenable<InitializeResponse>;
-    onConfigurationChange: (_settings: {
-        "docker-linter": DockerLinterSettings;
-    }, requestor: IValidationRequestor) => void;
+    onConfigurationChange: (settings: any, requestor: IValidationRequestor) => void;
     validate: (document: IDocument) => Promise<Diagnostic[]>;
 }

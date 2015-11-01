@@ -15,6 +15,6 @@ let perlDefaults: DockerLinterSettings = {
 	code: 0
 };
 
-let perlValidator = new DockerLinterValidator(perlDefaults);
+let perlValidator = new DockerLinterValidator(perlDefaults, "docker-linter");
 
 runSingleFileValidator(process.stdin, process.stdout, perlValidator);

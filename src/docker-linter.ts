@@ -53,9 +53,11 @@ function isInteger(value: number) {
 
 export class DockerLinterValidator implements SingleFileValidator {
 	private settings: DockerLinterSettings;
+	private settingsKey: string;
 
-	constructor(defaults: DockerLinterSettings) {
+	constructor(defaults: DockerLinterSettings, settingsKey: string) {
 		this.settings = defaults;
+		this.settingsKey = settingsKey;
 	}
 
 	updateSettings = (settings: DockerLinterSettings) => {
@@ -128,9 +130,9 @@ export class DockerLinterValidator implements SingleFileValidator {
 		return setMachineEnv(this.settings.machine);
 	};
 
-	onConfigurationChange = (_settings: { "docker-linter": DockerLinterSettings }, requestor: IValidationRequestor): void => {
-		if (_settings["docker-linter"]) {
-			this.updateSettings(_settings["docker-linter"]);
+	onConfigurationChange = (settings: any, requestor: IValidationRequestor): void => {
+		if (settings[this.settingsKey]) {
+			this.updateSettings(settings[this.settingsKey]);
 		}
 
 		setMachineEnv(this.settings.machine);
