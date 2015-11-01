@@ -38,7 +38,7 @@
           "default": "perl -c",
           "description": "The command to which the buffer contents is sent."
         },
-        "docker-linter.regex": {
+        "docker-linter.regexp": {
           "type": "string",
           "default": "(.*) at ([^ ]*) line (\\d+)[.,]",
           "description": "The regex that is is used to match for errors."
@@ -72,7 +72,8 @@
     },
     "languageWorkers": {
       "activate": [
-        "onLanguage:perl"
+        "onLanguage:perl",
+        "onLanguage:python"
       ],
       "executable": {
         "run": {

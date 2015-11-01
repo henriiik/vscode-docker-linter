@@ -105,9 +105,7 @@ export class DockerLinterValidator implements SingleFileValidator {
 	parseBuffer = (buffer: Buffer) => {
 		let result: Diagnostic[] = [];
 		let out = buffer.toString();
-		let problemRegex = new RegExp(this.settings.regexp, "g");
-
-		result.push(getDebugDiagnostic(this.getDebugString(out)));
+		let problemRegex = new RegExp(this.settings.regexp, "gm");
 
 		let match: RegExpExecArray;
 		while (match = problemRegex.exec(out)) {
@@ -136,11 +134,21 @@ export class DockerLinterValidator implements SingleFileValidator {
 		child.stdin.end();
 
 		return new Promise<Diagnostic[]>((resolve, reject) => {
+			let result: Diagnostic[] = [];
+			let debugString = "";
 			child.stderr.on("data", (data: Buffer) => {
-				resolve(this.parseBuffer(data));
+				debugString += data.toString();
+				result = result.concat(this.parseBuffer(data));
 			});
+
 			child.stdout.on("data", (data: Buffer) => {
-				resolve(this.parseBuffer(data));
+				debugString += data.toString();
+				result = result.concat(this.parseBuffer(data));
+			});
+
+			child.on("close", (code: string) => {
+				result.push(getDebugDiagnostic(this.getDebugString(debugString)));
+				resolve(result);
 			});
 		});
 	};
