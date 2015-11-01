@@ -34,11 +34,11 @@ function setMachineEnv(machine: string): Thenable<InitializeResponse> {
 				});
 			}
 
-			let outString = stdout.toString();
+			let out = stdout.toString();
 			let envRegex = /export (.+)="(.+)"\n/g;
 
 			let match: RegExpExecArray;
-			while (match = envRegex.exec(outString)) {
+			while (match = envRegex.exec(out)) {
 				process.env[match[1]] = match[2];
 			}
 
