@@ -5,12 +5,10 @@
 		"module": "commonjs",
 		"target": "ES5",
 		"moduleResolution": "node",
-		"rootDir": "src",
-		"outDir": "lib",
-		"sourceMap": true
+		"sourceMap": true,
+		"outDir": "../../docker-linter/server"
 	},
 	"exclude": [
-		"node_modules",
-		"lib"
+		"node_modules"
 	]
 }
