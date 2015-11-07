@@ -9,9 +9,9 @@
 			// TCP/IP address. Default is "localhost".
 			"address": "localhost",
 			// Port to attach to.
-			"port": 5871,
-			"outDir": "lib",
-			"sourceMaps": true
+			"port": 6004,
+			"sourceMaps": true,
+			"outDir": "../docker-linter/server"
 		}
 	]
 }
