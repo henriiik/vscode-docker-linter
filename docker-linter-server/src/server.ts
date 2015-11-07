@@ -36,8 +36,8 @@ function getDebugString(extra: string): string {
 function getDebugDiagnostic(message: string): Diagnostic {
 	return {
 		range: {
-			start: { line: 1, character: 0 },
-			end: { line: 1, character: Number.MAX_VALUE },
+			start: { line: 0, character: 0 },
+			end: { line: 0, character: Number.MAX_VALUE },
 		},
 		severity: DiagnosticSeverity.Information,
 		message
@@ -45,7 +45,7 @@ function getDebugDiagnostic(message: string): Diagnostic {
 }
 
 function getDiagnostic(match: RegExpExecArray): Diagnostic {
-	let line = parseInt(match[settings.line], 10);
+	let line = parseInt(match[settings.line], 10) - 1;
 
 	let start = 0;
 	let end = Number.MAX_VALUE;
