@@ -1,9 +1,9 @@
 "use strict";
+import * as path from 'path';
+import { workspace, Disposable, ExtensionContext } from 'vscode';
+import { LanguageClient, LanguageClientOptions, SettingMonitor, RequestType } from 'vscode-languageclient';
 
-import { runSingleFileValidator } from "vscode-languageworker";
-import { DockerLinterSettings, DockerLinterValidator } from "./docker-linter";
-
-let perlDefaults: DockerLinterSettings = {
+let perlDefaults = {
 	machine: "default",
 	container: "docker-linter",
 	command: "perl -c",
@@ -15,6 +15,24 @@ let perlDefaults: DockerLinterSettings = {
 	code: 0
 };
 
-let perlValidator = new DockerLinterValidator(perlDefaults, "docker-linter");
+export function activate(context: ExtensionContext) {
 
-runSingleFileValidator(process.stdin, process.stdout, perlValidator);
+	// We need to go one level up since an extension compile the js code into
+	// the output folder.
+	let serverModule = path.join(__dirname, '..', 'server', 'server.js');
+	let debugOptions = { execArgv: ["--nolazy", "--debug=6004"] };
+	let serverOptions = {
+		run: { module: serverModule, hello: perlDefaults },
+		debug: { module: serverModule, options: debugOptions}
+	};
+
+	let clientOptions: LanguageClientOptions = {
+		documentSelector: ['perl'],
+		synchronize: {
+			configurationSection: 'docker-linter'
+		}
+	}
+
+	let client = new LanguageClient('Docker Linter !', serverOptions, clientOptions);
+	context.subscriptions.push(new SettingMonitor(client, 'docker-linter.enable').start());
+}
