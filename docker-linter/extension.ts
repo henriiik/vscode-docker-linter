@@ -1,18 +1,6 @@
 "use strict";
 import * as path from "path";
 import { workspace, Disposable, ExtensionContext } from "vscode";
-
-let perlDefaults = {
-	machine: "default",
-	container: "docker-linter",
-	command: "perl -c",
-	regexp: "(.*) at ([^ ]*) line (\\d+)[.,]",
-	message: 1,
-	line: 3,
-	column: 0,
-	severity: 0,
-	code: 0
-};
 import { LanguageClient, LanguageClientOptions, SettingMonitor, RequestType } from "vscode-languageclient";
 
 let langs = ["perl", "perlcritic"];
@@ -25,7 +13,7 @@ export function activate(context: ExtensionContext) {
 		let serverModule = path.join(__dirname, "..", "server", "server.js");
 		let debugOptions = { execArgv: ["--nolazy", "--debug=6004"] };
 		let serverOptions = {
-			run: { module: serverModule, hello: perlDefaults },
+			run: { module: serverModule },
 			debug: { module: serverModule, options: debugOptions }
 		};
 
