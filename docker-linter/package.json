@@ -32,17 +32,17 @@
         "docker-linter.perl.enable": {
           "type": "boolean",
           "default": false,
-          "description": "Control whether docker-linter-perl is enabled for perl files or not."
+          "description": "Control whether perl compile linting is enabled for perl files."
         },
         "docker-linter.perl.machine": {
           "type": "string",
           "default": "default",
-          "description": "The name of the docker-machine in which you run your linting container."
+          "description": "The name of the docker-machine in which you run your containers."
         },
         "docker-linter.perl.container": {
           "type": "string",
-          "default": "docker-linter-perl",
-          "description": "The name of the docker container in which the linting command is to be run."
+          "default": "docker-linter",
+          "description": "The name of the docker container in which you want to run your linting."
         },
         "docker-linter.perl.command": {
           "type": "string",
@@ -82,17 +82,17 @@
         "docker-linter.perlcritic.enable": {
           "type": "boolean",
           "default": false,
-          "description": "Control whether docker-linter-perlcritic is enabled for perl files or not."
+          "description": "Control whether perlcritic linting is enabled for perl files."
         },
         "docker-linter.perlcritic.machine": {
           "type": "string",
           "default": "default",
-          "description": "The name of the docker-machine in which you run your linting container."
+          "description": "The name of the docker-machine in which you run your containers."
         },
         "docker-linter.perlcritic.container": {
           "type": "string",
-          "default": "docker-linter-perl",
-          "description": "The name of the docker container in which the linting command is to be run."
+          "default": "docker-linter",
+          "description": "The name of the docker container in which you want to run your linting."
         },
         "docker-linter.perlcritic.command": {
           "type": "string",
@@ -125,6 +125,56 @@
           "description": "The number of the group that matches the severity."
         },
         "docker-linter.perlcritic.code": {
+          "type": "number",
+          "default": 0,
+          "description": "The number of the group that matches the code."
+        },
+        "docker-linter.flake8.enable": {
+          "type": "boolean",
+          "default": false,
+          "description": "Control whether flake8 linting is enabled for python files or not."
+        },
+        "docker-linter.flake8.machine": {
+          "type": "string",
+          "default": "default",
+          "description": "The name of the docker-machine in which you run your containers."
+        },
+        "docker-linter.flake8.container": {
+          "type": "string",
+          "default": "docker-linter",
+          "description": "The name of the docker container in which you want to run your linting."
+        },
+        "docker-linter.flake8.command": {
+          "type": "string",
+          "default": "flake8 -",
+          "description": "The command to which the buffer contents is sent."
+        },
+        "docker-linter.flake8.regexp": {
+          "type": "string",
+          "default": "stdin:(\\d+):(\\d+): ([\\d+\\w\\s:]+)\n",
+          "description": "The regex that is is used to match for errors."
+        },
+        "docker-linter.flake8.message": {
+          "type": "number",
+          "default": 3,
+          "description": "The number of the group that matches the error."
+        },
+        "docker-linter.flake8.line": {
+          "type": "number",
+          "default": 1,
+          "description": "The number of the group that matches the line."
+        },
+        "docker-linter.flake8.column": {
+          "type": "number",
+          "default": 2,
+          "description": "The number of the group that matches the column."
+        },
+        "docker-linter.flake8.severity": {
+          "type": "number",
+          "default": 0,
+          "description": "The number of the group that matches the severity."
+        },
+        "docker-linter.flake8.code": {
           "type": "number",
           "default": 0,
           "description": "The number of the group that matches the code."

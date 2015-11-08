@@ -3,10 +3,26 @@ import * as path from "path";
 import { workspace, Disposable, ExtensionContext } from "vscode";
 import { LanguageClient, LanguageClientOptions, SettingMonitor, RequestType } from "vscode-languageclient";
 
-let langs = ["perl", "perlcritic"];
+interface DockerLinter {
+	name: string;
+	language: string;
+}
+
+let linters: DockerLinter[] = [
+	{
+		name: "perl",
+		language: "perl"
+	}, {
+		name: "perlcritic",
+		language: "perl"
+	}, {
+		name: "flake8",
+		language: "python"
+	}
+];
 
 export function activate(context: ExtensionContext) {
-	langs.forEach(lang => {
+	linters.forEach(linter => {
 
 		// We need to go one level up since an extension compile the js code into
 		// the output folder.
@@ -18,13 +34,13 @@ export function activate(context: ExtensionContext) {
 		};
 
 		let clientOptions: LanguageClientOptions = {
-			documentSelector: ["perl"],
+			documentSelector: [linter.language],
 			synchronize: {
-				configurationSection: "docker-linter."+lang
+				configurationSection: `docker-linter.${linter.name}`
 			}
 		};
 
-		let client = new LanguageClient("Docker Linter "+lang+"!", serverOptions, clientOptions);
-		context.subscriptions.push(new SettingMonitor(client, "docker-linter."+lang+".enable").start());
+		let client = new LanguageClient(`Docker Linter: ${linter.name}`, serverOptions, clientOptions);
+		context.subscriptions.push(new SettingMonitor(client, `docker-linter.${linter.name}.enable`).start());
 	});
 }
