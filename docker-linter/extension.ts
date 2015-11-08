@@ -20,11 +20,11 @@ export function activate(context: ExtensionContext) {
 		let clientOptions: LanguageClientOptions = {
 			documentSelector: ["perl"],
 			synchronize: {
-				configurationSection: "docker-linter-"+lang
+				configurationSection: "docker-linter."+lang
 			}
 		};
 
 		let client = new LanguageClient("Docker Linter "+lang+"!", serverOptions, clientOptions);
-		context.subscriptions.push(new SettingMonitor(client, "docker-linter-"+lang+".enable").start());
+		context.subscriptions.push(new SettingMonitor(client, "docker-linter."+lang+".enable").start());
 	});
 }

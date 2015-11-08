@@ -29,102 +29,102 @@
       "type": "object",
       "title": "docker-linter configuration",
       "properties": {
-        "docker-linter-perl.enable": {
+        "docker-linter.perl.enable": {
           "type": "boolean",
           "default": false,
           "description": "Control whether docker-linter-perl is enabled for perl files or not."
         },
-        "docker-linter-perl.machine": {
+        "docker-linter.perl.machine": {
           "type": "string",
           "default": "default",
           "description": "The name of the docker-machine in which you run your linting container."
         },
-        "docker-linter-perl.container": {
+        "docker-linter.perl.container": {
           "type": "string",
           "default": "docker-linter-perl",
           "description": "The name of the docker container in which the linting command is to be run."
         },
-        "docker-linter-perl.command": {
+        "docker-linter.perl.command": {
           "type": "string",
           "default": "perl -c",
           "description": "The command to which the buffer contents is sent."
         },
-        "docker-linter-perl.regexp": {
+        "docker-linter.perl.regexp": {
           "type": "string",
           "default": "(.*) at ([^ ]*) line (\\d+)[.,]",
           "description": "The regex that is is used to match for errors."
         },
-        "docker-linter-perl.message": {
+        "docker-linter.perl.message": {
           "type": "number",
           "default": 1,
           "description": "The number of the group that matches the error."
         },
-        "docker-linter-perl.line": {
+        "docker-linter.perl.line": {
           "type": "number",
           "default": 3,
           "description": "The number of the group that matches the line."
         },
-        "docker-linter-perl.column": {
+        "docker-linter.perl.column": {
           "type": "number",
           "default": 0,
           "description": "The number of the group that matches the column."
         },
-        "docker-linter-perl.severity": {
+        "docker-linter.perl.severity": {
           "type": "number",
           "default": 0,
           "description": "The number of the group that matches the severity."
         },
-        "docker-linter-perl.code": {
+        "docker-linter.perl.code": {
           "type": "number",
           "default": 0,
           "description": "The number of the group that matches the code."
         },
-        "docker-linter-perlcritic.enable": {
+        "docker-linter.perlcritic.enable": {
           "type": "boolean",
           "default": false,
           "description": "Control whether docker-linter-perlcritic is enabled for perl files or not."
         },
-        "docker-linter-perlcritic.machine": {
+        "docker-linter.perlcritic.machine": {
           "type": "string",
           "default": "default",
           "description": "The name of the docker-machine in which you run your linting container."
         },
-        "docker-linter-perlcritic.container": {
+        "docker-linter.perlcritic.container": {
           "type": "string",
           "default": "docker-linter-perl",
           "description": "The name of the docker container in which the linting command is to be run."
         },
-        "docker-linter-perlcritic.command": {
+        "docker-linter.perlcritic.command": {
           "type": "string",
           "default": "perlcritic --verbose 1 -",
           "description": "The command to which the buffer contents is sent."
         },
-        "docker-linter-perlcritic.regexp": {
+        "docker-linter.perlcritic.regexp": {
           "type": "string",
-          "default": "(.*) at ([^ ]*) line (\\d+)[.,]",
+          "default": "STDIN:(\\d+):(\\d+):([\\w\\s]+)",
           "description": "The regex that is is used to match for errors."
         },
-        "docker-linter-perlcritic.message": {
-          "type": "number",
-          "default": 1,
-          "description": "The number of the group that matches the error."
-        },
-        "docker-linter-perlcritic.line": {
+        "docker-linter.perlcritic.message": {
           "type": "number",
           "default": 3,
+          "description": "The number of the group that matches the error."
+        },
+        "docker-linter.perlcritic.line": {
+          "type": "number",
+          "default": 1,
           "description": "The number of the group that matches the line."
         },
-        "docker-linter-perlcritic.column": {
+        "docker-linter.perlcritic.column": {
           "type": "number",
-          "default": 0,
+          "default": 2,
           "description": "The number of the group that matches the column."
         },
-        "docker-linter-perlcritic.severity": {
+        "docker-linter.perlcritic.severity": {
           "type": "number",
           "default": 0,
           "description": "The number of the group that matches the severity."
         },
-        "docker-linter-perlcritic.code": {
+        "docker-linter.perlcritic.code": {
           "type": "number",
           "default": 0,
           "description": "The number of the group that matches the code."

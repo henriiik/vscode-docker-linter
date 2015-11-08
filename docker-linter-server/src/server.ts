@@ -192,13 +192,12 @@ function validateMany(documents: ITextDocument[]): void {
 }
 
 connection.onDidChangeConfiguration((params) => {
-	let perl = params.settings["docker-linter-perl"];
-	if (perl) {
-		settings = perl;
+	let dockerLinterSettings = params.settings["docker-linter"];
+	if (dockerLinterSettings.perl) {
+		settings = dockerLinterSettings.perl;
 	}
-	let perlcritic = params.settings["docker-linter-perlcritic"];
-	if (perlcritic) {
-		settings = perlcritic;
+	if (dockerLinterSettings.perlcritic) {
+		settings = dockerLinterSettings.perlcritic;
 	}
 	validateMany(documents.all());
 });
