@@ -1,7 +1,6 @@
 "use strict";
 import * as path from "path";
 import { workspace, Disposable, ExtensionContext } from "vscode";
-import { LanguageClient, LanguageClientOptions, SettingMonitor, RequestType } from 'vscode-languageclient';
 
 let perlDefaults = {
 	machine: "default",
@@ -14,6 +13,7 @@ let perlDefaults = {
 	severity: 0,
 	code: 0
 };
+import { LanguageClient, LanguageClientOptions, SettingMonitor, RequestType } from "vscode-languageclient";
 
 let langs = ["perl", "perlcritic"];
 
