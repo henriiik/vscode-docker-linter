@@ -148,8 +148,12 @@ function validate(document: ITextDocument): void {
 	});
 
 	child.on("close", (code: string) => {
-		diagnostics.push(getDebugDiagnostic(code + " | " + getDebugString(debugString)));
-		connection.sendDiagnostics({ uri, diagnostics });
+		if (debugString.match(/^Error response from daemon/)) {
+			connection.window.showErrorMessage(getMessage({ message: debugString }, document));
+		} else {
+			diagnostics.push(getDebugDiagnostic(code + " | " + getDebugString(debugString)));
+			connection.sendDiagnostics({ uri, diagnostics });
+		}
 	});
 }
 
@@ -204,120 +208,3 @@ connection.onDidChangeWatchedFiles((params) => {
 });
 
 connection.listen();
-
-// export class DockerLinterValidator implements SingleFileValidator {
-// 	private settings: DockerLinterSettings;
-// 	private settingsKey: string;
-
-// 	constructor(defaults: DockerLinterSettings, settingsKey: string) {
-// 		this.settings = defaults;
-// 		this.settingsKey = settingsKey;
-// 	}
-
-// 	updateSettings = (settings: DockerLinterSettings) => {
-// 		this.settings.machine = settings.machine || this.settings.machine;
-// 		this.settings.container = settings.container || this.settings.container;
-// 		this.settings.command = settings.command || this.settings.command;
-// 		this.settings.regexp = settings.regexp || this.settings.regexp;
-
-// 		this.settings.line = settings.line || this.settings.line;
-// 		this.settings.message = settings.message || this.settings.message;
-
-// 		this.settings.code = isInteger(settings.code) ? settings.code : this.settings.code;
-// 		this.settings.column = isInteger(settings.column) ? settings.column : this.settings.column;
-// 		this.settings.severity = isInteger(settings.severity) ? settings.severity : this.settings.severity;
-// 	};
-
-// 	getDebugString = (extra: string): string => {
-// 		return [this.settings.machine, this.settings.container, this.settings.command, this.settings.regexp, extra].join(" | ");
-// 	};
-
-// 	getDiagnostic = (match: RegExpExecArray): Diagnostic => {
-// 		let line = parseInt(match[this.settings.line], 10);
-
-// 		let start = 0;
-// 		let end = Number.MAX_VALUE;
-// 		if (this.settings.column) {
-// 			start = end = parseInt(match[this.settings.column], 10);
-// 		}
-
-// 		let severity = DiagnosticSeverity.Error;
-// 		if (this.settings.severity) {
-// 			switch (match[this.settings.severity]) {
-// 				case "warning":
-// 					severity = DiagnosticSeverity.Warning;
-// 					break;
-// 				case "info":
-// 					severity = DiagnosticSeverity.Information;
-// 					break;
-// 			}
-// 		}
-
-// 		let diagnostic: Diagnostic = {
-// 			range: {
-// 				start: { line, character: start },
-// 				end: { line, character: end }
-// 			},
-// 			severity,
-// 			message: match[this.settings.message]
-// 		};
-
-// 		if (this.settings.code) {
-// 			diagnostic.code = match[this.settings.code];
-// 		}
-
-// 		return diagnostic;
-// 	};
-
-// 	parseBuffer = (buffer: Buffer) => {
-// 		let result: Diagnostic[] = [];
-// 		let out = buffer.toString();
-// 		let problemRegex = new RegExp(this.settings.regexp, "gm");
-
-// 		let match: RegExpExecArray;
-// 		while (match = problemRegex.exec(out)) {
-// 			result.push(this.getDiagnostic(match));
-// 		}
-
-// 		return result;
-// 	};
-
-// 	initialize = (rootFolder: string): Thenable<InitializeResponse> => {
-// 		return setMachineEnv(this.settings.machine);
-// 	};
-
-// 	onConfigurationChange = (settings: any, requestor: IValidationRequestor): void => {
-// 		if (settings[this.settingsKey]) {
-// 			this.updateSettings(settings[this.settingsKey]);
-// 		}
-
-// 		setMachineEnv(this.settings.machine);
-// 		requestor.all();
-// 	};
-
-// 	validate = (document: IDocument): Promise<Diagnostic[]> => {
-// 		let child = spawn("docker", `exec -i ${this.settings.container } ${this.settings.command }`.split(" "));
-// 		child.stdin.write(document.getText());
-// 		child.stdin.end();
-
-// 		return new Promise<Diagnostic[]>((resolve, reject) => {
-// 			let result: Diagnostic[] = [];
-// 			let debugString = "";
-
-// 			child.stderr.on("data", (data: Buffer) => {
-// 				debugString += data.toString();
-// 				result = result.concat(this.parseBuffer(data));
-// 			});
-
-// 			child.stdout.on("data", (data: Buffer) => {
-// 				debugString += data.toString();
-// 				result = result.concat(this.parseBuffer(data));
-// 			});
-
-// 			child.on("close", (code: string) => {
-// 				result.push(getDebugDiagnostic(code + " | " + this.getDebugString(debugString)));
-// 				resolve(result);
-// 			});
-// 		});
-// 	};
-// }
