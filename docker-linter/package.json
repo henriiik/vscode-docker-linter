@@ -101,7 +101,7 @@
         },
         "docker-linter.perlcritic.regexp": {
           "type": "string",
-          "default": "STDIN:(\\d+):(\\d+):([\\w\\s]+)",
+          "default": ":(\\d+):(\\d+):([\\w\\s\"-]+)(STDIN)?",
           "description": "The regex that is is used to match for errors."
         },
         "docker-linter.perlcritic.message": {

@@ -111,15 +111,16 @@ function checkDockerVersion(): Thenable<InitializeResult | ResponseError<Initial
 	});
 }
 
-function setMachineEnv(machine: string): Thenable<InitializeResult | ResponseError<InitializeError>> {
-	return new Promise<InitializeResult | ResponseError<InitializeError>>((resolve, reject) => {
+function setMachineEnv(machine: string): Thenable<string> {
+	return new Promise<string>((resolve, reject) => {
 		if (machine.length === 0) {
-			resolve({ capabilities: { textDocumentSync: documents.syncKind } });
+			resolve(machine);
 		} else {
 			exec(`docker-machine env ${machine} --shell bash`, function(error, stdout, stderr) {
 				if (error) {
 					let errString = stderr.toString();
-					reject(new ResponseError<InitializeError>(99, errString, { retry: true }));
+					connection.window.showErrorMessage(`Could not get docker-machine environment: '${errString}'`);
+					reject(machine);
 				}
 
 				let out = stdout.toString();
@@ -130,7 +131,7 @@ function setMachineEnv(machine: string): Thenable<InitializeResult | ResponseErr
 					process.env[match[1]] = match[2];
 				}
 
-				resolve({ capabilities: { textDocumentSync: documents.syncKind } });
+				resolve(machine);
 			});
 		}
 	});
