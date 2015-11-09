@@ -151,7 +151,7 @@
         },
         "docker-linter.flake8.regexp": {
           "type": "string",
-          "default": "stdin:(\\d+):(\\d+): ([\\d+\\w\\s:]+)\n",
+          "default": "(\\d+):(\\d+): ([\\d+\\w\\s:\\']+)",
           "description": "The regex that is is used to match for errors."
         },
         "docker-linter.flake8.message": {
