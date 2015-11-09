@@ -1,0 +1,5 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+	"docker-linter.flake8.enable": true,
+	"docker-linter.flake8.container": "django-web"
+}
