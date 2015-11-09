@@ -167,7 +167,9 @@ function validate(document: ITextDocument): void {
 
 	child.on("close", (code: string) => {
 		if (debugString.match(/^Error response from daemon/)) {
-			connection.window.showErrorMessage(getMessage({ message: debugString }, document));
+			connection.window.showErrorMessage(getMessage({ message: `Is your container running? Error: ${debugString}` }, document));
+		} else if (debugString.match(/^An error occurred trying to connect/)) {
+			connection.window.showErrorMessage(getMessage({ message: `Is your machine correctly configured? Error: ${debugString}` }, document));
 		} else {
 			diagnostics.push(getDebugDiagnostic(code + " | " + getDebugString(debugString)));
 			connection.sendDiagnostics({ uri, diagnostics });
