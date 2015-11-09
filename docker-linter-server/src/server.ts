@@ -98,24 +98,41 @@ function isInteger(value: number) {
 	return isFinite(value) && Math.floor(value) === value;
 }
 
-function setMachineEnv(machine: string): Thenable<InitializeResult | ResponseError<InitializeError>> {
+function checkDockerVersion(): Thenable<InitializeResult | ResponseError<InitializeError>> {
 	return new Promise<InitializeResult | ResponseError<InitializeError>>((resolve, reject) => {
-		exec(`docker-machine env ${machine} --shell bash`, function(error, stdout, stderr) {
+		exec(`docker -v`, function(error, stdout, stderr) {
 			if (error) {
-				let errString = stderr.toString();
+				let errString = `Could not find docker: '${stderr.toString() }'`;
 				reject(new ResponseError<InitializeError>(99, errString, { retry: true }));
-			}
-
-			let out = stdout.toString();
-			let envRegex = /export (.+)="(.+)"\n/g;
-
-			let match: RegExpExecArray;
-			while (match = envRegex.exec(out)) {
-				process.env[match[1]] = match[2];
 			}
 
 			resolve({ capabilities: { textDocumentSync: documents.syncKind } });
 		});
+	});
+}
+
+function setMachineEnv(machine: string): Thenable<InitializeResult | ResponseError<InitializeError>> {
+	return new Promise<InitializeResult | ResponseError<InitializeError>>((resolve, reject) => {
+		if (machine.length === 0) {
+			resolve({ capabilities: { textDocumentSync: documents.syncKind } });
+		} else {
+			exec(`docker-machine env ${machine} --shell bash`, function(error, stdout, stderr) {
+				if (error) {
+					let errString = stderr.toString();
+					reject(new ResponseError<InitializeError>(99, errString, { retry: true }));
+				}
+
+				let out = stdout.toString();
+				let envRegex = /export (.+)="(.+)"\n/g;
+
+				let match: RegExpExecArray;
+				while (match = envRegex.exec(out)) {
+					process.env[match[1]] = match[2];
+				}
+
+				resolve({ capabilities: { textDocumentSync: documents.syncKind } });
+			});
+		}
 	});
 }
 
@@ -125,7 +142,7 @@ documents.onDidChangeContent((event) => {
 });
 
 connection.onInitialize((params): Thenable<InitializeResult | ResponseError<InitializeError>> => {
-	return setMachineEnv("default");
+	return checkDockerVersion();
 });
 
 function validate(document: ITextDocument): void {
@@ -199,7 +216,10 @@ connection.onDidChangeConfiguration((params) => {
 			settings = dockerLinterSettings[linter];
 		};
 	});
-	validateMany(documents.all());
+	setMachineEnv(settings.machine)
+		.then(response => {
+			validateMany(documents.all());
+		});
 });
 
 connection.onDidChangeWatchedFiles((params) => {
