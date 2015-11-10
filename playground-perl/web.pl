@@ -1,7 +1,9 @@
 use Dancer2;
 
+my $world = 'World';
+
 get '/' => sub {
-    "Hello World!"
+    "Hello $world!"
 };
 
 dance;
