@@ -171,7 +171,7 @@ function validate(document: ITextDocument): void {
 		} else if (debugString.match(/^An error occurred trying to connect/)) {
 			connection.window.showErrorMessage(getMessage({ message: `Is your machine correctly configured? Error: ${debugString}` }, document));
 		} else {
-			diagnostics.push(getDebugDiagnostic(code + " | " + getDebugString(debugString)));
+			connection.console.log(code + " | " + getDebugString(debugString));
 			connection.sendDiagnostics({ uri, diagnostics });
 		}
 	});
