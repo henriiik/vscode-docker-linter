@@ -1,0 +1,7 @@
+web:
+  build: .
+  container_name: dancer-web
+  volumes:
+    - .:/code
+  ports:
+    - 3000:3000

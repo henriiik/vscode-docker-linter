@@ -1,0 +1,8 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+	"docker-linter.perl.enable": true,
+	"docker-linter.perl.container": "dancer-web",
+
+	"docker-linter.perlcritic.enable": true,
+	"docker-linter.perlcritic.container": "dancer-web"
+}
