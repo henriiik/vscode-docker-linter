@@ -39,7 +39,6 @@ You also have to install the specified linter in your container.
 
 ```json
 {
-	// Add the following setting to your workspace.
 	"docker-linter.perl.enable": true,
 }
 ```
@@ -48,7 +47,6 @@ You also have to install the specified linter in your container.
 
 ```json
 {
-	// Add the following setting to your workspace.
 	"docker-linter.perlcritic.enable": true,
 }
 ```
@@ -57,7 +55,6 @@ You also have to install the specified linter in your container.
 
 ```json
 {
-	// Add the following settings to your workspace.
 	"docker-linter.flake8.enable": true,
 }
 ```
