@@ -28,6 +28,7 @@ let lib: any = null;
 let settings: DockerLinterSettings = null;
 let options: any = null;
 let documents: TextDocuments = new TextDocuments();
+let ready = false;
 
 function getDebugString(extra: string): string {
 	return [settings.machine, settings.container, settings.command, settings.regexp, extra].join(" | ");
@@ -147,6 +148,9 @@ connection.onInitialize((params): Thenable<InitializeResult | ResponseError<Init
 });
 
 function validate(document: ITextDocument): void {
+	if (!ready) {
+		return;
+	};
 	let child = spawn("docker", `exec -i ${settings.container } ${settings.command }`.split(" "));
 	child.stdin.write(document.getText());
 	child.stdin.end();
@@ -221,6 +225,7 @@ connection.onDidChangeConfiguration((params) => {
 	});
 	setMachineEnv(settings.machine)
 		.then(response => {
+			ready = true;
 			validateMany(documents.all());
 		});
 });
