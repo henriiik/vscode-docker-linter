@@ -1,19 +1,13 @@
 # Functionality
 
-Docker linter lets you run linters in docker containers.
+Run linters for perl and python in your containers.
 
-# linters
-
-Currently the following linters are supported
-
-## Perl
-
-- perl -c
-- perlcritic
-
-## Pyhon
-
-- flake8
+# Linters
+- python
+	- flake8
+- perl
+	- perl -c
+	- perlcritic
 
 # Installation
 
@@ -21,35 +15,18 @@ Open up VS Code and hit F1 and type ext select install and type docker-linter hi
 
 You also have to install the specified linter in your container.
 
-# Settings
+# Perl
 
-## Common
-
-```json
-{
-	"docker-linter.*linter*.enable": true, // Enable a linter
-	"docker-linter.*linter*.container": "some-container-name", // Specify in which container the linter should be run
-}
-
-```
-
-## Perl
-
-### perl -c
+Enable the linters with the following settings. For a more comprehensive guide, follow the link: https://github.com/henriiik/docker-linter/tree/master/playground-perl
 
 ```json
 {
 	"docker-linter.perl.enable": true,
-}
-```
-
-### perlcritic
-
-```json
-{
 	"docker-linter.perlcritic.enable": true,
 }
 ```
+
+Enable the linter with the following setting. For a more comprehensive guide, follow the link: https://github.com/henriiik/docker-linter/tree/master/playground-python
 
 # Python
 
