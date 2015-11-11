@@ -151,6 +151,7 @@ function validate(document: ITextDocument): void {
 	if (!ready) {
 		return;
 	};
+
 	let child = spawn("docker", `exec -i ${settings.container } ${settings.command }`.split(" "));
 	child.stdin.write(document.getText());
 	child.stdin.end();

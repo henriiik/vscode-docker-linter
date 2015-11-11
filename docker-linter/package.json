@@ -1,16 +1,17 @@
 {
   "name": "docker-linter",
-  "description": "",
-  "version": "0.0.4",
+  "description": "Lint the stuff in your docker containers.",
+  "version": "0.0.5",
   "author": "Henrik Sjööh <hello@enhenrik.nu> (http://www.enhenrik.nu)",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Microsoft/vscode-eslint.git"
+    "url": "https://github.com/henriiik/docker-linter"
   },
   "bugs": {
-    "url": "https://github.com/Microsoft/vscode-eslint/issues"
+    "url": "https://github.com/henriiik/docker-linter/issues"
   },
+ 	"homepage": "https://github.com/henriiik/docker-linter/blob/master/docker-linter/README.md",
   "categories": [
     "Languages",
     "Linters"
