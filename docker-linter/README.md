@@ -26,9 +26,9 @@ Enable the linters with the following settings. For a more comprehensive guide, 
 }
 ```
 
-Enable the linter with the following setting. For a more comprehensive guide, follow the link: https://github.com/henriiik/docker-linter/tree/master/playground-python
-
 # Python
+
+Enable the linter with the following setting. For a more comprehensive guide, follow the link: https://github.com/henriiik/docker-linter/tree/master/playground-python
 
 ```json
 {
