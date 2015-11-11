@@ -1,0 +1,7 @@
+web:
+  build: .
+  container_name: sinatra-web
+  volumes:
+    - .:/code
+  ports:
+    - 4567:4567
