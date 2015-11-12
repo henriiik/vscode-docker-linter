@@ -18,6 +18,9 @@ let linters: DockerLinter[] = [
 	}, {
 		name: "flake8",
 		language: "python"
+	}, {
+		name: "rubocop",
+		language: "ruby"
 	}
 ];
 

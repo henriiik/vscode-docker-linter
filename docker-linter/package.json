@@ -22,6 +22,7 @@
   },
   "activationEvents": [
     "onLanguage:perl",
+    "onLanguage:ruby",
     "onLanguage:python"
   ],
   "main": "./out/extension",
@@ -176,6 +177,56 @@
           "description": "The number of the group that matches the severity."
         },
         "docker-linter.flake8.code": {
+          "type": "number",
+          "default": 0,
+          "description": "The number of the group that matches the code."
+        },
+        "docker-linter.rubocop.enable": {
+          "type": "boolean",
+          "default": false,
+          "description": "Control whether rubocop linting is enabled for python files or not."
+        },
+        "docker-linter.rubocop.machine": {
+          "type": "string",
+          "default": "default",
+          "description": "The name of the docker-machine in which you run your containers."
+        },
+        "docker-linter.rubocop.container": {
+          "type": "string",
+          "default": "docker-linter",
+          "description": "The name of the docker container in which you want to run your linting."
+        },
+        "docker-linter.rubocop.command": {
+          "type": "string",
+          "default": "rubocop --format simple --stdin -",
+          "description": "The command to which the buffer contents is sent."
+        },
+        "docker-linter.rubocop.regexp": {
+          "type": "string",
+          "default": "\\s*(\\d+):\\s*(\\d+): ([\\d+\\w\\s:\\'\\-]+)",
+          "description": "The regex that is is used to match for errors."
+        },
+        "docker-linter.rubocop.message": {
+          "type": "number",
+          "default": 3,
+          "description": "The number of the group that matches the error."
+        },
+        "docker-linter.rubocop.line": {
+          "type": "number",
+          "default": 1,
+          "description": "The number of the group that matches the line."
+        },
+        "docker-linter.rubocop.column": {
+          "type": "number",
+          "default": 2,
+          "description": "The number of the group that matches the column."
+        },
+        "docker-linter.rubocop.severity": {
+          "type": "number",
+          "default": 0,
+          "description": "The number of the group that matches the severity."
+        },
+        "docker-linter.rubocop.code": {
           "type": "number",
           "default": 0,
           "description": "The number of the group that matches the code."

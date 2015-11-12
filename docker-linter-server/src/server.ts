@@ -216,7 +216,7 @@ function validateMany(documents: ITextDocument[]): void {
 	tracker.sendErrors(connection);
 }
 
-let linters = ["perl", "perlcritic", "flake8"];
+let linters = ["perl", "perlcritic", "flake8", "rubocop"];
 connection.onDidChangeConfiguration((params) => {
 	let dockerLinterSettings = params.settings["docker-linter"];
 	linters.forEach(linter => {
