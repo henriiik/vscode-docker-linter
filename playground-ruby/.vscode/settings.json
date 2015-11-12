@@ -1,0 +1,5 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+	"docker-linter.rubocop.enable": true,
+	"docker-linter.rubocop.container": "sinatra-web"
+}

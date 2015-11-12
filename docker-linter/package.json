@@ -53,7 +53,7 @@
         },
         "docker-linter.perl.regexp": {
           "type": "string",
-          "default": "(.*) at ([^ ]*) line (\\d+)[.,]",
+          "default": "(.*) at ([^\\s]*) line (\\d+)",
           "description": "The regex that is is used to match for errors."
         },
         "docker-linter.perl.message": {
@@ -103,7 +103,7 @@
         },
         "docker-linter.perlcritic.regexp": {
           "type": "string",
-          "default": ":(\\d+):(\\d+):([\\w\\s\"-]+)(STDIN)?",
+          "default": ":(\\d+):(\\d+):(.*)",
           "description": "The regex that is is used to match for errors."
         },
         "docker-linter.perlcritic.message": {
@@ -153,7 +153,7 @@
         },
         "docker-linter.flake8.regexp": {
           "type": "string",
-          "default": "(\\d+):(\\d+): ([\\d+\\w\\s:\\']+)",
+          "default": "(\\d+):(\\d+): (.*)",
           "description": "The regex that is is used to match for errors."
         },
         "docker-linter.flake8.message": {
@@ -198,12 +198,12 @@
         },
         "docker-linter.rubocop.command": {
           "type": "string",
-          "default": "rubocop --format simple --stdin -",
+          "default": "rubocop --cache false --except=Style/FileName --format simple --stdin -",
           "description": "The command to which the buffer contents is sent."
         },
         "docker-linter.rubocop.regexp": {
           "type": "string",
-          "default": "\\s*(\\d+):\\s*(\\d+): ([\\d+\\w\\s:\\'\\-]+)",
+          "default": ":\\s*(\\d+):\\s*(\\d+): (.*)",
           "description": "The regex that is is used to match for errors."
         },
         "docker-linter.rubocop.message": {

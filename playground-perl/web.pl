@@ -1,6 +1,6 @@
 use Dancer2;
 
-my $world = 'World';
+my $world = 'World' if 1;
 
 get '/' => sub {
     "Hello $world!"

@@ -45,7 +45,7 @@ function getDebugDiagnostic(message: string): Diagnostic {
 	};
 }
 
-function getDiagnostic(match: RegExpExecArray): Diagnostic {
+function getDiagnostic(match: RegExpMatchArray): Diagnostic {
 	let line = parseInt(match[settings.line], 10) - 1;
 
 	let start = 0;
@@ -84,13 +84,15 @@ function getDiagnostic(match: RegExpExecArray): Diagnostic {
 
 function parseBuffer(buffer: Buffer) {
 	let result: Diagnostic[] = [];
-	let out = buffer.toString();
-	let problemRegex = new RegExp(settings.regexp, "gm");
+	let lines = buffer.toString().split("\n");
+	let problemRegex = new RegExp(settings.regexp, "m");
 
-	let match: RegExpExecArray;
-	while (match = problemRegex.exec(out)) {
-		result.push(getDiagnostic(match));
-	}
+	lines.forEach(line => {
+		let match = line.match(problemRegex);
+		if (match) {
+			result.push(getDiagnostic(match));
+		}
+	});
 
 	return result;
 };
