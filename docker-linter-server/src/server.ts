@@ -51,7 +51,7 @@ function getDiagnostic(match: RegExpExecArray): Diagnostic {
 	let start = 0;
 	let end = Number.MAX_VALUE;
 	if (settings.column) {
-		start = end = parseInt(match[settings.column], 10);
+		start = end = parseInt(match[settings.column], 10) - 1;
 	}
 
 	let severity = DiagnosticSeverity.Error;
