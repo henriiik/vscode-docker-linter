@@ -1,11 +1,12 @@
-FROM python:2.7
+FROM python
 
 ENV PYTHONUNBUFFERED 1
 
+RUN pip install Flask
+RUN pip install flake8
+
 RUN mkdir /code
-WORKDIR /code
-
-ADD requirements.txt /code/
-RUN pip install -r requirements.txt
-
 ADD . /code/
+
+WORKDIR /code
+CMD python web.py

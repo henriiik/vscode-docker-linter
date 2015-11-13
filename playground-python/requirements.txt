@@ -1,3 +1,0 @@
-Django
-psycopg2
-flake8
