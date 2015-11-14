@@ -1,7 +1,7 @@
 {
   "name": "docker-linter",
   "description": "Lint perl, python and/or ruby in your docker containers.",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "author": "Henrik Sjööh <hello@enhenrik.nu> (http://www.enhenrik.nu)",
   "license": "MIT",
   "repository": {
@@ -17,6 +17,9 @@
     "Linters"
   ],
   "icon": "docker-linter-icon.svg",
+	"galleryBanner": {
+		"theme": "dark"
+	},
   "publisher": "henriiik",
   "engines": {
     "vscode": "0.10.x"
