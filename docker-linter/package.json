@@ -16,10 +16,7 @@
     "Languages",
     "Linters"
   ],
-  "icon": "docker-linter-icon.svg",
-	"galleryBanner": {
-		"theme": "dark"
-	},
+  "icon": "docker-linter-logo.svg",
   "publisher": "henriiik",
   "engines": {
     "vscode": "0.10.x"
