@@ -1,7 +1,7 @@
 {
   "name": "docker-linter",
   "description": "Lint perl, python and/or ruby in your docker containers.",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "author": "Henrik Sjööh <hello@enhenrik.nu> (http://www.enhenrik.nu)",
   "license": "MIT",
   "repository": {
@@ -11,19 +11,20 @@
   "bugs": {
     "url": "https://github.com/henriiik/docker-linter/issues"
   },
- 	"homepage": "https://github.com/henriiik/docker-linter/blob/master/docker-linter/README.md",
+  "homepage": "https://github.com/henriiik/docker-linter/blob/master/docker-linter/README.md",
   "categories": [
     "Languages",
     "Linters"
   ],
+  "icon": "docker-linter-icon.svg",
   "publisher": "henriiik",
   "engines": {
     "vscode": "0.10.x"
   },
   "activationEvents": [
     "onLanguage:perl",
-    "onLanguage:ruby",
-    "onLanguage:python"
+    "onLanguage:python",
+    "onLanguage:ruby"
   ],
   "main": "./out/extension",
   "contributes": {
@@ -184,7 +185,7 @@
         "docker-linter.rubocop.enable": {
           "type": "boolean",
           "default": false,
-          "description": "Control whether rubocop linting is enabled for python files or not."
+          "description": "Control whether rubocop linting is enabled for ruby files or not."
         },
         "docker-linter.rubocop.machine": {
           "type": "string",
