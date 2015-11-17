@@ -149,16 +149,24 @@ connection.onInitialize((params): Thenable<InitializeResult | ResponseError<Init
 	return checkDockerVersion();
 });
 
+let isValidating: { [index: string]: boolean } = {};
+let needsValidating: { [index: string]: ITextDocument } = {};
+
 function validate(document: ITextDocument): void {
-	if (!ready) {
+	let uri = document.uri;
+	connection.console.log(`Wants to validate ${uri}`);
+
+	if (!ready || isValidating[uri]) {
+		needsValidating[uri] = document;
 		return;
 	};
+
+	isValidating[uri] = true;
 
 	let child = spawn("docker", `exec -i ${settings.container } ${settings.command }`.split(" "));
 	child.stdin.write(document.getText());
 	child.stdin.end();
 
-	let uri = document.uri;
 	let diagnostics: Diagnostic[] = [];
 	let debugString = "";
 
@@ -180,6 +188,17 @@ function validate(document: ITextDocument): void {
 		} else {
 			connection.console.log(code + " | " + getDebugString(debugString));
 			connection.sendDiagnostics({ uri, diagnostics });
+		}
+
+		isValidating[uri] = false;
+		let revalidateDocument = needsValidating[uri];
+
+		if (revalidateDocument) {
+			connection.console.log(`Revalidating ${uri}`);
+			delete needsValidating[uri];
+			validate(revalidateDocument);
+		} else {
+			connection.console.log(`Finished validating ${uri}`);
 		}
 	});
 }
