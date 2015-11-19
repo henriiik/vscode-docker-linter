@@ -244,10 +244,10 @@
     "compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
   },
   "dependencies": {
-    "vscode-languageclient": "0.10.x"
+    "vscode-languageclient": "^0.10.7"
   },
   "devDependencies": {
-    "vscode": "0.10.x",
-    "tslint": "^2.5.1"
+    "tslint": "^2.5.1",
+    "vscode": "^0.10.4"
   }
 }
