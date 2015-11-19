@@ -6,3 +6,22 @@ Docker linter is avaliable on the [Visual Studio Marketplace](https://marketplac
 
 More information is avaliable on the marketplace or in the different subdirectories in the repository.
 
+## Development
+
+To start development of the extension you fist have to compile the server, which you can do from inside code with the build task, or from the commandline with `npm run compile`.
+
+```sh
+cd  /path/to/docker-linter/docker-linter-server
+npm install
+code .
+```
+
+Then you have to compile and launch the extension.
+
+```sh
+cd  /path/to/docker-linter/docker-linter
+npm install
+code .
+```
+
+Start build task, and then launch the extension with F5.
