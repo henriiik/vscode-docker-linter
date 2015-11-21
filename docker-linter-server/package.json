@@ -7,10 +7,10 @@
     "node": "*"
   },
   "dependencies": {
-    "vscode-languageserver": "0.10.x"
+    "vscode-languageserver": "^0.10.6"
   },
   "devDependencies": {
-    "tslint": "^2.5.1",
+    "tslint": "^3.0.0",
     "typescript": "^1.6.2"
   },
   "scripts": {
