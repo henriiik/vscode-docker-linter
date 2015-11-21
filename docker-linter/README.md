@@ -18,7 +18,7 @@ Run linters for perl, python and/or ruby in your containers.
 
 # Perl
 
-For a more comprehensive example, follow the link: https://github.com/henriiik/docker-linter/tree/master/playground-perl
+For a more comprehensive example, follow the link: https://github.com/henriiik/vscode-docker-linter/tree/master/playground-perl
 
 `perl -c` quickstart:
 
@@ -33,7 +33,7 @@ For a more comprehensive example, follow the link: https://github.com/henriiik/d
 
 # Python
 
-For a more comprehensive example, follow the link: https://github.com/henriiik/docker-linter/tree/master/playground-python
+For a more comprehensive example, follow the link: https://github.com/henriiik/vscode-docker-linter/tree/master/playground-python
 
 `flake8` quickstart:
 
@@ -43,7 +43,7 @@ For a more comprehensive example, follow the link: https://github.com/henriiik/d
 
 # Ruby
 
-For a more comprehensive example, follow the link: https://github.com/henriiik/docker-linter/tree/master/playground-ruby
+For a more comprehensive example, follow the link: https://github.com/henriiik/vscode-docker-linter/tree/master/playground-ruby
 
 `rubocop` quickstart:
 

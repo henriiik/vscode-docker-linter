@@ -2,17 +2,17 @@
   "name": "docker-linter",
   "displayName": "Docker Linter",
   "description": "Lint perl, python and/or ruby in your docker containers.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "Henrik Sjööh <hello@enhenrik.nu> (http://www.enhenrik.nu)",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/henriiik/docker-linter"
+    "url": "https://github.com/henriiik/vscode-docker-linter"
   },
   "bugs": {
-    "url": "https://github.com/henriiik/docker-linter/issues"
+    "url": "https://github.com/henriiik/vscode-docker-linter/issues"
   },
-  "homepage": "https://github.com/henriiik/docker-linter/blob/master/docker-linter/README.md",
+  "homepage": "https://github.com/henriiik/vscode-docker-linter/tree/master/docker-linter",
   "categories": [
     "Linters"
   ],
