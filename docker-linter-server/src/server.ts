@@ -18,7 +18,7 @@ interface DockerLinterSettings {
 	regexp: string;
 	line: number;
 	column: number;
-	severity: number;
+	severity: number | string;
 	message: number;
 	code: number;
 }
@@ -56,7 +56,11 @@ function getDiagnostic(match: RegExpMatchArray): Diagnostic {
 
 	let severity = DiagnosticSeverity.Error;
 	if (settings.severity) {
-		switch (match[settings.severity]) {
+		let tmp = settings.severity;
+		if (typeof tmp === "number") {
+			tmp = match[Number(tmp)];
+		}
+		switch (tmp) {
 			case "warning":
 				severity = DiagnosticSeverity.Warning;
 				break;
@@ -105,7 +109,7 @@ function checkDockerVersion(): Thenable<InitializeResult | ResponseError<Initial
 	return new Promise<InitializeResult | ResponseError<InitializeError>>((resolve, reject) => {
 		exec(`docker -v`, function(error, stdout, stderr) {
 			if (error) {
-				let errString = `Could not find docker: '${stderr.toString() }'`;
+				let errString = `Could not find docker: '${stderr.toString()}'`;
 				reject(new ResponseError<InitializeError>(99, errString, { retry: true }));
 			}
 
@@ -154,7 +158,7 @@ let needsValidating: { [index: string]: ITextDocument } = {};
 
 function validate(document: ITextDocument): void {
 	let uri = document.uri;
-	connection.console.log(`Wants to validate ${uri}`);
+	// //connection.console.log(`Wants to validate ${uri}`);
 
 	if (!ready || isValidating[uri]) {
 		needsValidating[uri] = document;
@@ -163,7 +167,7 @@ function validate(document: ITextDocument): void {
 
 	isValidating[uri] = true;
 
-	let child = spawn("docker", `exec -i ${settings.container } ${settings.command }`.split(" "));
+	let child = spawn("docker", `exec -i ${settings.container} ${settings.command}`.split(" "));
 	child.stdin.write(document.getText());
 	child.stdin.end();
 
@@ -186,7 +190,7 @@ function validate(document: ITextDocument): void {
 		} else if (debugString.match(/^An error occurred trying to connect/)) {
 			connection.window.showErrorMessage(`Is your machine correctly configured? Error: ${debugString}`);
 		} else {
-			connection.console.log(code + " | " + getDebugString(debugString));
+			//connection.console.log(code + " | " + getDebugString(debugString));
 			connection.sendDiagnostics({ uri, diagnostics });
 		}
 
@@ -194,11 +198,11 @@ function validate(document: ITextDocument): void {
 		let revalidateDocument = needsValidating[uri];
 
 		if (revalidateDocument) {
-			connection.console.log(`Revalidating ${uri}`);
+			//connection.console.log(`Revalidating ${uri}`);
 			delete needsValidating[uri];
 			validate(revalidateDocument);
 		} else {
-			connection.console.log(`Finished validating ${uri}`);
+			//connection.console.log(`Finished validating ${uri}`);
 		}
 	});
 }
@@ -212,7 +216,7 @@ function getMessage(err: any, document: ITextDocument): string {
 			result = result.substr(5);
 		}
 	} else {
-		result = `An unknown error occured while validating file: ${Files.uriToFilePath(document.uri) }`;
+		result = `An unknown error occured while validating file: ${Files.uriToFilePath(document.uri)}`;
 	}
 	return result;
 }

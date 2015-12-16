@@ -10,8 +10,8 @@
     "vscode-languageserver": "0.10.x"
   },
   "devDependencies": {
-    "tslint": "^2.5.1",
-    "typescript": "^1.6.2"
+    "tslint": "^3.2.0",
+    "typescript": "^1.7.5"
   },
   "scripts": {
     "compile": "installServerIntoExtension ../docker-linter ./package.json ./src/tsconfig.json && tsc -p ./src",

@@ -77,9 +77,9 @@
           "description": "The number of the group that matches the column."
         },
         "docker-linter.perl.severity": {
-          "type": "number",
+          "type": ["number", "string"],
           "default": 0,
-          "description": "The number of the group that matches the severity."
+          "description": "The number of the group that matches the severity. Or a fixed severity (error, warning, info)."
         },
         "docker-linter.perl.code": {
           "type": "number",
@@ -127,9 +127,9 @@
           "description": "The number of the group that matches the column."
         },
         "docker-linter.perlcritic.severity": {
-          "type": "number",
+          "type": ["number", "string"],
           "default": 0,
-          "description": "The number of the group that matches the severity."
+          "description": "The number of the group that matches the severity. Or a fixed severity (error, warning, info)."
         },
         "docker-linter.perlcritic.code": {
           "type": "number",
@@ -177,9 +177,9 @@
           "description": "The number of the group that matches the column."
         },
         "docker-linter.flake8.severity": {
-          "type": "number",
+          "type": ["number", "string"],
           "default": 0,
-          "description": "The number of the group that matches the severity."
+          "description": "The number of the group that matches the severity. Or a fixed severity (error, warning, info)."
         },
         "docker-linter.flake8.code": {
           "type": "number",
@@ -227,9 +227,9 @@
           "description": "The number of the group that matches the column."
         },
         "docker-linter.rubocop.severity": {
-          "type": "number",
+          "type": ["number", "string"],
           "default": 0,
-          "description": "The number of the group that matches the severity."
+          "description": "The number of the group that matches the severity. Or a fixed severity (error, warning, info)."
         },
         "docker-linter.rubocop.code": {
           "type": "number",
@@ -247,7 +247,8 @@
     "vscode-languageclient": "0.10.x"
   },
   "devDependencies": {
-    "vscode": "0.10.x",
-    "tslint": "^2.5.1"
+    "tslint": "^3.0.0",
+    "typescript": "^1.7.5",
+    "vscode": "^0.10.6"
   }
 }

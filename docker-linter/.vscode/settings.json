@@ -7,5 +7,6 @@
 		"server": true
 	},
 	"tslint.enable": true,
-	"files.trimTrailingWhitespace": true
+	"files.trimTrailingWhitespace": true,
+	"editor.insertSpaces": false
 }

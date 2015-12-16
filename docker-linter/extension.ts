@@ -1,4 +1,5 @@
 "use strict";
+
 import * as path from "path";
 import { workspace, Disposable, ExtensionContext } from "vscode";
 import { LanguageClient, LanguageClientOptions, SettingMonitor, RequestType } from "vscode-languageclient";
