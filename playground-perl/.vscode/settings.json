@@ -1,7 +1,9 @@
 {
 	"docker-linter.perl.enable": true,
 	"docker-linter.perl.container": "dancer-web",
+    "docker-linter.perl.severity": "error",
 
 	"docker-linter.perlcritic.enable": true,
-	"docker-linter.perlcritic.container": "dancer-web"
+	"docker-linter.perlcritic.container": "dancer-web",
+    "docker-linter.perlcritic.severity": "warning"
 }

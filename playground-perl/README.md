@@ -21,5 +21,7 @@ This is what makes the magic happen.
 - `.vscode/settings.json`
 	- `docker-linter.perl.enable` is set to `true`
 	- `docker-linter.perl.container` is set to `dancer-web`
+	- `docker-linter.perl.severity` is set to `error`
 	- `docker-linter.perlcritic.enable` is set to `true`
 	- `docker-linter.perlcritic.container` is set to `dancer-web`
+	- `docker-linter.perlcritic.severity` is set to `warning`
