@@ -23,7 +23,7 @@
   },
   "publisher": "henriiik",
   "engines": {
-    "vscode": "0.10.x"
+    "vscode": "1.0.x"
   },
   "activationEvents": [
     "onLanguage:perl",
@@ -253,14 +253,15 @@
   },
   "scripts": {
     "vscode:prepublish": "cd ../docker-linter-server && npm run compile && cd ../docker-linter && node ./node_modules/vscode/bin/compile",
-    "compile": "node ./node_modules/vscode/bin/compile -watch -p ./"
+    "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
-    "vscode-languageclient": "^0.10.7"
+    "vscode-languageclient": "^2.1.0"
   },
   "devDependencies": {
-    "tslint": "^3.2.1",
-    "typescript": "^1.7.5",
-    "vscode": "^0.10.7"
+    "tslint": "^3.7.4",
+    "typescript": "^1.8.10",
+    "vscode": "^0.11.10"
   }
 }
