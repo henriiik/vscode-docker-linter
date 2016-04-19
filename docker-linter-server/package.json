@@ -7,11 +7,11 @@
     "node": "*"
   },
   "dependencies": {
-    "vscode-languageserver": "^0.10.6"
+    "vscode-languageserver": "^2.1.2"
   },
   "devDependencies": {
-    "tslint": "^3.2.1",
-    "typescript": "^1.7.5"
+    "tslint": "^3.7.4",
+    "typescript": "^1.8.10"
   },
   "scripts": {
     "compile": "installServerIntoExtension ../docker-linter ./package.json ./src/tsconfig.json && tsc -p ./src",
