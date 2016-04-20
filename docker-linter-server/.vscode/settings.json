@@ -2,5 +2,5 @@
 {
 	"tslint.enable": true,
 	"files.trimTrailingWhitespace": true,
-	"editor.insertSpaces": false
+	"editor.insertSpaces": true
 }
