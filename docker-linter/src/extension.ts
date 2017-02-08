@@ -2,7 +2,7 @@
 
 import * as path from "path";
 import { workspace, Disposable, ExtensionContext } from "vscode";
-import { LanguageClient, LanguageClientOptions, SettingMonitor, RequestType } from "vscode-languageclient";
+import { LanguageClient, LanguageClientOptions, SettingMonitor, RequestType, TransportKind } from "vscode-languageclient";
 
 interface DockerLinter {
 	name: string;
@@ -28,13 +28,12 @@ let linters: DockerLinter[] = [
 export function activate(context: ExtensionContext) {
 	linters.forEach(linter => {
 
-		// We need to go one level up since an extension compile the js code into
-		// the output folder.
-		let serverModule = path.join(__dirname, "..", "server", "server.js");
-		let debugOptions = { execArgv: ["--nolazy", "--debug=6004"] };
+		let serverModule = context.asAbsolutePath(path.join('server', 'server.js'));
+		let debugOptions = { execArgv: ["--nolazy", "--debug=6009"] };
+
 		let serverOptions = {
-			run: { module: serverModule },
-			debug: { module: serverModule, options: debugOptions }
+			run: { module: serverModule, transport: TransportKind.ipc },
+			debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions }
 		};
 
 		let clientOptions: LanguageClientOptions = {
@@ -45,6 +44,7 @@ export function activate(context: ExtensionContext) {
 		};
 
 		let client = new LanguageClient(`Docker Linter: ${linter.name}`, serverOptions, clientOptions);
-		context.subscriptions.push(new SettingMonitor(client, `docker-linter.${linter.name}.enable`).start());
+		let monitor = new SettingMonitor(client, `docker-linter.${linter.name}.enable`).start();
+		context.subscriptions.push(monitor);
 	});
 }

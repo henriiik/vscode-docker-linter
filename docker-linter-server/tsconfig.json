@@ -2,11 +2,14 @@
 	"compilerOptions": {
 		"noImplicitAny": true,
 		"declaration": true,
+		"target": "es6",
 		"module": "commonjs",
-		"target": "ES5",
 		"moduleResolution": "node",
 		"sourceMap": true,
-		"outDir": "../../docker-linter/server"
+		"lib": [
+			"es2016"
+		],
+		"outDir": "../docker-linter/server"
 	},
 	"exclude": [
 		"node_modules"

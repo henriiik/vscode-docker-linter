@@ -1,12 +1,12 @@
 "use strict";
 
 import {
-createConnection, IConnection,
-ResponseError, RequestType, IRequestHandler, NotificationType, INotificationHandler,
-InitializeResult, InitializeError,
-Diagnostic, DiagnosticSeverity, Position, Files,
-TextDocuments, ITextDocument, TextDocumentSyncKind,
-ErrorMessageTracker
+	IPCMessageReader, IPCMessageWriter,
+	createConnection, IConnection, TextDocumentSyncKind,
+	ResponseError, RequestType, NotificationType,
+	InitializeResult, InitializeError,
+	TextDocuments, TextDocument, Diagnostic, DiagnosticSeverity,
+	Position, Files, ErrorMessageTracker
 } from "vscode-languageserver";
 
 import { exec, spawn } from "child_process";
@@ -23,7 +23,7 @@ interface DockerLinterSettings {
 	code: number;
 }
 
-let connection: IConnection = createConnection(process.stdin, process.stdout);
+let connection: IConnection = createConnection(new IPCMessageReader(process), new IPCMessageWriter(process));
 let lib: any = null;
 let settings: DockerLinterSettings = null;
 let options: any = null;
@@ -54,7 +54,7 @@ function getDiagnostic(match: RegExpMatchArray): Diagnostic {
 		start = end = parseInt(match[settings.column], 10) - 1;
 	}
 
-	let severity = DiagnosticSeverity.Error;
+	let severity: DiagnosticSeverity = DiagnosticSeverity.Error;
 	if (settings.severity) {
 		let tmp = settings.severity;
 		if (typeof tmp === "number") {
@@ -107,7 +107,7 @@ function isInteger(value: number) {
 
 function checkDockerVersion(): Thenable<InitializeResult | ResponseError<InitializeError>> {
 	return new Promise<InitializeResult | ResponseError<InitializeError>>((resolve, reject) => {
-		exec(`docker -v`, function(error, stdout, stderr) {
+		exec(`docker -v`, function (error, stdout, stderr) {
 			if (error) {
 				let errString = `Could not find docker: '${stderr.toString()}'`;
 				reject(new ResponseError<InitializeError>(99, errString, { retry: true }));
@@ -123,7 +123,7 @@ function setMachineEnv(machine: string): Thenable<string> {
 		if (machine.length === 0) {
 			resolve(machine);
 		} else {
-			exec(`docker-machine env ${machine} --shell bash`, function(error, stdout, stderr) {
+			exec(`docker-machine env ${machine} --shell bash`, function (error, stdout, stderr) {
 				if (error) {
 					let errString = stderr.toString();
 					connection.window.showErrorMessage(`Could not get docker-machine environment: '${errString}'`);
@@ -154,9 +154,9 @@ connection.onInitialize((params): Thenable<InitializeResult | ResponseError<Init
 });
 
 let isValidating: { [index: string]: boolean } = {};
-let needsValidating: { [index: string]: ITextDocument } = {};
+let needsValidating: { [index: string]: TextDocument } = {};
 
-function validate(document: ITextDocument): void {
+function validate(document: TextDocument): void {
 	let uri = document.uri;
 	// //connection.console.log(`Wants to validate ${uri}`);
 
@@ -207,7 +207,7 @@ function validate(document: ITextDocument): void {
 	});
 }
 
-function getMessage(err: any, document: ITextDocument): string {
+function getMessage(err: any, document: TextDocument): string {
 	let result: string = null;
 	if (typeof err.message === "string" || err.message instanceof String) {
 		result = <string>err.message;
@@ -221,7 +221,7 @@ function getMessage(err: any, document: ITextDocument): string {
 	return result;
 }
 
-function validateSingle(document: ITextDocument): void {
+function validateSingle(document: TextDocument): void {
 	try {
 		validate(document);
 	} catch (err) {
@@ -229,7 +229,7 @@ function validateSingle(document: ITextDocument): void {
 	}
 }
 
-function validateMany(documents: ITextDocument[]): void {
+function validateMany(documents: TextDocument[]): void {
 	let tracker = new ErrorMessageTracker();
 	documents.forEach(document => {
 		try {

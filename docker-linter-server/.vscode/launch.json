@@ -3,15 +3,12 @@
 	// List of configurations. Add new configurations or edit existing ones.
 	"configurations": [
 		{
-			"name": "Attach to Language Worker",
+			"name": "Attach",
 			"type": "node",
 			"request": "attach",
-			// TCP/IP address. Default is "localhost".
-			"address": "localhost",
-			// Port to attach to.
-			"port": 6004,
+			"port": 6009,
 			"sourceMaps": true,
-			"outDir": "../docker-linter/server"
+			"outDir": "${workspaceRoot}/../docker-linter/server"
 		}
 	]
 }
