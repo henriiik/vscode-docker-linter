@@ -27,6 +27,7 @@
   },
   "activationEvents": [
     "onLanguage:perl",
+    "onLanguage:php",
     "onLanguage:python",
     "onLanguage:ruby"
   ],
@@ -191,6 +192,59 @@
           "description": "The number of the group that matches the severity. Or a fixed severity (error, warning, info)."
         },
         "docker-linter.flake8.code": {
+          "type": "number",
+          "default": 0,
+          "description": "The number of the group that matches the code."
+        },
+        "docker-linter.php.enable": {
+          "type": "boolean",
+          "default": false,
+          "description": "Control whether php linting is enabled for php files or not."
+        },
+        "docker-linter.php.machine": {
+          "type": "string",
+          "default": "default",
+          "description": "The name of the docker-machine in which you run your containers."
+        },
+        "docker-linter.php.container": {
+          "type": "string",
+          "default": "docker-linter",
+          "description": "The name of the docker container in which you want to run your linting."
+        },
+        "docker-linter.php.command": {
+          "type": "string",
+          "default": "php -l",
+          "description": "The command to which the buffer contents is sent."
+        },
+        "docker-linter.php.regexp": {
+          "type": "string",
+          "default": "(.*) in - on line (\\d+)",
+          "description": "The regex that is is used to match for errors."
+        },
+        "docker-linter.php.message": {
+          "type": "number",
+          "default": 1,
+          "description": "The number of the group that matches the error."
+        },
+        "docker-linter.php.line": {
+          "type": "number",
+          "default": 2,
+          "description": "The number of the group that matches the line."
+        },
+        "docker-linter.php.column": {
+          "type": "number",
+          "default": 0,
+          "description": "The number of the group that matches the column."
+        },
+        "docker-linter.php.severity": {
+          "type": [
+            "number",
+            "string"
+          ],
+          "default": 0,
+          "description": "The number of the group that matches the severity. Or a fixed severity (error, warning, info)."
+        },
+        "docker-linter.php.code": {
           "type": "number",
           "default": 0,
           "description": "The number of the group that matches the code."

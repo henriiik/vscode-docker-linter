@@ -1,0 +1,7 @@
+web:
+  build: .
+  container_name: php-web
+  volumes:
+    - .:/var/www/html
+  ports:
+    - 3000:80

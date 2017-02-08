@@ -22,6 +22,9 @@ let linters: DockerLinter[] = [
 	}, {
 		name: "rubocop",
 		language: "ruby"
+	}, {
+		name: "php",
+		language: "php"
 	}
 ];
 
