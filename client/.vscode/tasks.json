@@ -5,7 +5,9 @@
 	"showOutput": "silent",
 	"args": [
 		"run",
-		"watch"
+		"compile",
+		"--loglevel",
+		"silent"
 	],
 	"isBackground": true,
 	"problemMatcher": "$tsc-watch"

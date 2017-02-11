@@ -6,9 +6,9 @@
 			"name": "Attach",
 			"type": "node",
 			"request": "attach",
-			"port": 6009,
+			"port": 6004,
 			"sourceMaps": true,
-			"outDir": "${workspaceRoot}/../docker-linter/server"
+			"outDir": "${workspaceRoot}/../client/server"
 		}
 	]
 }

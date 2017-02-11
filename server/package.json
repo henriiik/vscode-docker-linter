@@ -12,10 +12,10 @@
   "devDependencies": {
     "@types/node": "^6.0.52",
     "tslint": "^4.4.2",
-    "typescript": "^2.1.5"
+    "typescript": "^2.1.6"
   },
   "scripts": {
-    "compile": "installServerIntoExtension ../docker-linter ./package.json ./tsconfig.json && tsc -p .",
-    "watch": "installServerIntoExtension ../docker-linter ./package.json ./tsconfig.json && tsc --watch -p ."
+    "compile": "installServerIntoExtension ../client ./package.json ./tsconfig.json && tsc -p .",
+    "watch": "installServerIntoExtension ../client ./package.json ./tsconfig.json && tsc --watch -p ."
   }
 }

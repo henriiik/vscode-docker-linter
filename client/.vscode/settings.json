@@ -5,6 +5,7 @@
 	"search.exclude": {
 		"out": true
 	},
+	"typescript.tsdk": "./node_modules/typescript/lib",
 	"tslint.enable": true,
 	"files.trimTrailingWhitespace": true,
 	"editor.insertSpaces": false
