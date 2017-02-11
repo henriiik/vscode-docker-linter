@@ -5,6 +5,8 @@ Run linters for perl, python and/or ruby in your containers.
 - perl
 	- `perl -c`
 	- `perlcritic`
+- php
+	- `php -l`
 - python
 	- `flake8`
 - ruby
@@ -31,6 +33,15 @@ For a more comprehensive example, follow the link: https://github.com/henriiik/v
 2. Set `docker-linter.perlcritic.enable` to `true` in your workspace settings.
 3. Set `docker-linter.perlcritic.container` to the name the container with your perl environment.
 
+# PHP
+
+For a more comprehensive example, follow the link: https://github.com/henriiik/vscode-docker-linter/tree/master/playground-php
+
+`php -l` quickstart:
+
+1. Set `docker-linter.php.enable` to `true` in your workspace settings.
+2. Set `docker-linter.php.container` to the name the container with your php environment.
+
 # Python
 
 For a more comprehensive example, follow the link: https://github.com/henriiik/vscode-docker-linter/tree/master/playground-python
@@ -53,7 +64,7 @@ For a more comprehensive example, follow the link: https://github.com/henriiik/v
 
 # docker-machine
 
-The extension assumes you are running your containers with the docker-machine default setup.
+The extension assumes you are running your containers with the [Docker Toolbox](https://www.docker.com/products/docker-toolbox) default setup.
 
 If you have use another name for your docker-machine you can use the setting `docker-linter.**linter**.machine` to specify that name.
 
