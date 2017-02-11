@@ -11,7 +11,7 @@ More information is avaliable on the marketplace or in the different subdirector
 To start development of the extension you fist have to compile the server, which you can do from inside code with the build task, or from the commandline with `npm run compile`.
 
 ```sh
-cd  /path/to/docker-linter/docker-linter-server
+cd  ./server
 npm install
 code .
 ```
@@ -19,7 +19,7 @@ code .
 Then you have to compile and launch the extension.
 
 ```sh
-cd  /path/to/docker-linter/docker-linter
+cd  ./client
 npm install
 code .
 ```

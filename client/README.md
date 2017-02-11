@@ -1,11 +1,11 @@
 # Functionality
 
-Run linters for perl, python and/or ruby in your containers.
+Run linters for perl, php, python and/or ruby in your containers.
 
 - perl
 	- `perl -c`
 	- `perlcritic`
-- php
+- PHP
 	- `php -l`
 - python
 	- `flake8`
