@@ -158,7 +158,7 @@ let needsValidating: { [index: string]: TextDocument } = {};
 
 function validate(document: TextDocument): void {
 	let uri = document.uri;
-	connection.console.log(`Wants to validate ${uri}`);
+	// connection.console.log(`Wants to validate ${uri}`);
 
 	if (!ready || isValidating[uri]) {
 		needsValidating[uri] = document;
@@ -190,7 +190,7 @@ function validate(document: TextDocument): void {
 		} else if (debugString.match(/^An error occurred trying to connect/)) {
 			connection.window.showErrorMessage(`Is your machine correctly configured? Error: ${debugString}`);
 		} else {
-			connection.console.log(code + " | " + getDebugString(debugString));
+			// connection.console.log(code + " | " + getDebugString(debugString));
 			connection.sendDiagnostics({ uri, diagnostics });
 		}
 
@@ -198,11 +198,11 @@ function validate(document: TextDocument): void {
 		let revalidateDocument = needsValidating[uri];
 
 		if (revalidateDocument) {
-			connection.console.log(`Revalidating ${uri}`);
+			// connection.console.log(`Revalidating ${uri}`);
 			delete needsValidating[uri];
 			validate(revalidateDocument);
 		} else {
-			connection.console.log(`Finished validating ${uri}`);
+			// connection.console.log(`Finished validating ${uri}`);
 		}
 	});
 }
