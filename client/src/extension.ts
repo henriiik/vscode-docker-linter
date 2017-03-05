@@ -2,7 +2,7 @@
 
 import * as path from "path";
 import { workspace, Disposable, ExtensionContext } from "vscode";
-import { LanguageClient, LanguageClientOptions, SettingMonitor, RequestType, TransportKind } from "vscode-languageclient";
+import { LanguageClient, LanguageClientOptions, SettingMonitor, RequestType, TransportKind, ServerOptions } from "vscode-languageclient";
 
 interface DockerLinter {
 	name: string;
@@ -34,7 +34,7 @@ export function activate(context: ExtensionContext) {
 		let serverModule = context.asAbsolutePath(path.join('server', 'server.js'));
 		let debugOptions = { execArgv: ["--nolazy", "--debug=6009"] };
 
-		let serverOptions = {
+		let serverOptions: ServerOptions = {
 			run: { module: serverModule, transport: TransportKind.ipc },
 			debug: { module: serverModule, transport: TransportKind.ipc, options: debugOptions }
 		};
