@@ -17,6 +17,12 @@ let linters: DockerLinter[] = [
 		name: "perlcritic",
 		language: "perl"
 	}, {
+		name: "perl",
+		language: "perl+mojolicious"
+	}, {
+		name: "perlcritic",
+		language: "perl+mojolicious"
+	}, {
 		name: "flake8",
 		language: "python"
 	}, {
