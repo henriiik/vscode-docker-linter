@@ -1,6 +1,6 @@
-web:
+mojo:
   build: .
-  container_name: dancer-web
+  container_name: mojo
   volumes:
     - .:/code
   ports:

@@ -1,6 +1,7 @@
 FROM perl
 
-RUN cpanm Dancer2
+RUN cpanm Mojolicious::Lite
+RUN cpanm List::MoreUtils::XS
 RUN cpanm Perl::Critic
 
 RUN mkdir /code
@@ -8,4 +9,4 @@ RUN mkdir /code
 ADD . /code/
 
 WORKDIR /code
-CMD perl web.pl
+CMD morbo web.pl

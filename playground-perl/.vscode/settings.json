@@ -1,11 +1,11 @@
 {
 	"docker-linter.perl.enable": true,
-	"docker-linter.perl.container": "dancer-web",
+	"docker-linter.perl.container": "mojo",
 	"docker-linter.perl.severity": "error",
 	"docker-linter.perl.machine": "",
 
 	"docker-linter.perlcritic.enable": true,
-	"docker-linter.perlcritic.container": "dancer-web",
+	"docker-linter.perlcritic.container": "mojo",
 	"docker-linter.perlcritic.severity": "warning",
 	"docker-linter.perlcritic.machine": ""
 }

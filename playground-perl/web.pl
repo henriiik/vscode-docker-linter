@@ -1,9 +1,14 @@
-use Dancer2;
+# Example app from http://mojolicious.org/perldoc/Mojolicious/Lite
 
-my $world = 'World!' if 1;
+use Mojolicious::Lite;
 
-get '/' => sub {
-    "Hello $world!"
+# Route with placeholder
+get '/:foo' => sub {
+  my $c   = shift;
+
+  my $foo = $c->param('foo');
+  $c->render(text => "Hello from $foo.");
 };
 
-dance;
+# Start the Mojolicious command system
+app->start;

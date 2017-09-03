@@ -2,7 +2,7 @@
     "name": "docker-linter",
     "displayName": "Docker Linter",
     "description": "Lint perl, python and/or ruby in your docker containers.",
-    "version": "0.3.1",
+    "version": "0.4.0",
     "author": "Henrik Sjööh <hello@enhenrik.nu> (http://www.enhenrik.nu)",
     "license": "MIT",
     "repository": {
@@ -16,7 +16,7 @@
     "categories": [
         "Linters"
     ],
-    "icon": "docker-linter-logo.svg",
+    "icon": "docker-linter-logo.png",
     "galleryBanner": {
         "color": "#118DB6",
         "theme": "dark"
@@ -315,10 +315,10 @@
     "devDependencies": {
         "@types/mocha": "^2.2.33",
         "@types/node": "^6.0.52",
-        "typescript": "^2.2.1",
-        "vscode": "^1.0.5"
+        "typescript": "^2.5.2",
+        "vscode": "^1.1.5"
     },
     "dependencies": {
-        "vscode-languageclient": "^3.1.0"
+        "vscode-languageclient": "^3.3.0"
     }
 }

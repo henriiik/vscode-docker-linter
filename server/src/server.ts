@@ -1,13 +1,6 @@
 "use strict";
 
-import {
-	IPCMessageReader, IPCMessageWriter,
-	createConnection, IConnection, TextDocumentSyncKind,
-	ResponseError, RequestType, NotificationType,
-	InitializeResult, InitializeError,
-	TextDocuments, TextDocument, Diagnostic, DiagnosticSeverity,
-	Position, Files, ErrorMessageTracker
-} from "vscode-languageserver";
+import { Diagnostic, DiagnosticSeverity, ErrorMessageTracker, Files, IConnection, IPCMessageReader, IPCMessageWriter, InitializeError, InitializeParams, InitializeResult, NotificationType, Position, RequestHandler, RequestType, ResponseError, TextDocument, TextDocumentSyncKind, TextDocuments, createConnection } from "vscode-languageserver";
 
 import { exec, spawn } from "child_process";
 
@@ -105,8 +98,8 @@ function isInteger(value: number) {
 	return isFinite(value) && Math.floor(value) === value;
 }
 
-function checkDockerVersion(): Thenable<InitializeResult | ResponseError<InitializeError>> {
-	return new Promise<InitializeResult | ResponseError<InitializeError>>((resolve, reject) => {
+function checkDockerVersion(): Thenable<InitializeResult> {
+	return new Promise<InitializeResult>((resolve, reject) => {
 		exec(`docker -v`, function (error, stdout, stderr) {
 			if (error) {
 				let errString = `Could not find docker: '${stderr.toString()}'`;
@@ -149,7 +142,7 @@ documents.onDidChangeContent((event) => {
 	validateSingle(event.document);
 });
 
-connection.onInitialize((params): Thenable<InitializeResult | ResponseError<InitializeError>> => {
+connection.onInitialize((params): Thenable<InitializeResult> | Thenable<ResponseError<InitializeError>> => {
 	return checkDockerVersion();
 });
 
