@@ -1,3 +1,7 @@
+# [0.5.0] - 2017-02-11
+### Added
+- Debug setting
+
 # [0.4.0] - 2017-02-11
 ### Added
 - Support for perl+mojolicious
@@ -11,6 +15,7 @@
 - Support for fixed severity levels
 - Changelog
 
+[0.5.0]: https://github.com/henriiik/vscode-docker-linter/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/henriiik/vscode-docker-linter/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/henriiik/vscode-docker-linter/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/henriiik/vscode-docker-linter/compare/0.0.7...0.2.0

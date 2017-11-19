@@ -1,7 +1,7 @@
 "use strict";
 
 import * as path from "path";
-import { workspace, Disposable, ExtensionContext } from "vscode";
+import { workspace, Disposable, ExtensionContext, window as Window } from "vscode";
 import { LanguageClient, LanguageClientOptions, SettingMonitor, RequestType, TransportKind, ServerOptions } from "vscode-languageclient";
 
 interface DockerLinter {
@@ -35,10 +35,15 @@ let linters: DockerLinter[] = [
 ];
 
 export function activate(context: ExtensionContext) {
+
+	let outputChannel = Window.createOutputChannel("Docker Linter")
+
+	let port = 6008;
 	linters.forEach(linter => {
+		port += 1;
 
 		let serverModule = context.asAbsolutePath(path.join('server', 'server.js'));
-		let debugOptions = { execArgv: ["--nolazy", "--debug=6009"] };
+		let debugOptions = { execArgv: ["--nolazy", "--inspect="+port] };
 
 		let serverOptions: ServerOptions = {
 			run: { module: serverModule, transport: TransportKind.ipc },
@@ -48,8 +53,9 @@ export function activate(context: ExtensionContext) {
 		let clientOptions: LanguageClientOptions = {
 			documentSelector: [linter.language],
 			synchronize: {
-				configurationSection: `docker-linter.${linter.name}`
-			}
+				configurationSection: [`docker-linter.${linter.name}`, `docker-linter.debug`]
+			},
+			outputChannel: outputChannel,
 		};
 
 		let client = new LanguageClient(`Docker Linter: ${linter.name}`, serverOptions, clientOptions);

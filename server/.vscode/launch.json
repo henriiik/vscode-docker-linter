@@ -6,10 +6,10 @@
 			"name": "Attach",
 			"type": "node",
 			"request": "attach",
-			"port": 6009,
+			"port": 6013,
 			"sourceMaps": true,
 			"outFiles": [ "${workspaceRoot}/../client/server/**/*.js" ],
-			"protocol": "legacy"
+			"preLaunchTask": "npm"
 		}
 	]
 }

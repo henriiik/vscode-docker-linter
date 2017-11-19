@@ -2,7 +2,7 @@
     "name": "docker-linter",
     "displayName": "Docker Linter",
     "description": "Lint perl, python and/or ruby in your docker containers.",
-    "version": "0.4.0",
+    "version": "0.5.0",
     "author": "Henrik Sjööh <hello@enhenrik.nu> (http://www.enhenrik.nu)",
     "license": "MIT",
     "repository": {
@@ -23,7 +23,7 @@
     },
     "publisher": "henriiik",
     "engines": {
-        "vscode": "^1.10.1"
+        "vscode": "^1.15.0"
     },
     "activationEvents": [
         "onLanguage:perl",
@@ -38,6 +38,11 @@
             "type": "object",
             "title": "docker-linter configuration",
             "properties": {
+                "docker-linter.debug": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Enable this to output debug info to the console in VSCode"
+                },
                 "docker-linter.perl.enable": {
                     "type": "boolean",
                     "default": false,
@@ -313,12 +318,12 @@
         "postinstall": "node ./node_modules/vscode/bin/install"
     },
     "devDependencies": {
-        "@types/mocha": "^2.2.33",
-        "@types/node": "^6.0.52",
-        "typescript": "^2.5.2",
-        "vscode": "^1.1.5"
+        "@types/mocha": "^2.2.44",
+        "@types/node": "^8.0.53",
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.7"
     },
     "dependencies": {
-        "vscode-languageclient": "^3.3.0"
+        "vscode-languageclient": "^3.5.0"
     }
 }

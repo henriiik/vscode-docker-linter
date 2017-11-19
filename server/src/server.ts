@@ -1,6 +1,6 @@
 "use strict";
 
-import { Diagnostic, DiagnosticSeverity, ErrorMessageTracker, Files, IConnection, IPCMessageReader, IPCMessageWriter, InitializeError, InitializeParams, InitializeResult, NotificationType, Position, RequestHandler, RequestType, ResponseError, TextDocument, TextDocumentSyncKind, TextDocuments, createConnection } from "vscode-languageserver";
+import { Diagnostic, DiagnosticSeverity, ErrorMessageTracker, Files, InitializeError, InitializeParams, InitializeResult, NotificationType, Position, RequestHandler, RequestType, ResponseError, TextDocument, TextDocumentSyncKind, TextDocuments, createConnection, ProposedFeatures } from "vscode-languageserver";
 
 import { exec, spawn } from "child_process";
 
@@ -16,15 +16,21 @@ interface DockerLinterSettings {
 	code: number;
 }
 
-let connection: IConnection = createConnection(new IPCMessageReader(process), new IPCMessageWriter(process));
-let lib: any = null;
-let settings: DockerLinterSettings = null;
-let options: any = null;
+let connection = createConnection(ProposedFeatures.all);
+
+let linterSettings: DockerLinterSettings = null;
+let linterName = "";
+let debug = false;
+
 let documents: TextDocuments = new TextDocuments();
 let ready = false;
 
+function log(message) {
+	connection.console.log(`${linterName}: ${message}`);
+}
+
 function getDebugString(extra: string): string {
-	return [settings.machine, settings.container, settings.command, settings.regexp, extra].join(" | ");
+	return [linterSettings.machine, linterSettings.container, linterSettings.command, linterSettings.regexp, extra].join(" | ");
 };
 
 function getDebugDiagnostic(message: string): Diagnostic {
@@ -39,17 +45,17 @@ function getDebugDiagnostic(message: string): Diagnostic {
 }
 
 function getDiagnostic(match: RegExpMatchArray): Diagnostic {
-	let line = parseInt(match[settings.line], 10) - 1;
+	let line = parseInt(match[linterSettings.line], 10) - 1;
 
 	let start = 0;
 	let end = Number.MAX_VALUE;
-	if (settings.column) {
-		start = end = parseInt(match[settings.column], 10) - 1;
+	if (linterSettings.column) {
+		start = end = parseInt(match[linterSettings.column], 10) - 1;
 	}
 
 	let severity: DiagnosticSeverity = DiagnosticSeverity.Error;
-	if (settings.severity) {
-		let tmp = settings.severity;
+	if (linterSettings.severity) {
+		let tmp = linterSettings.severity;
 		if (typeof tmp === "number") {
 			tmp = match[Number(tmp)];
 		}
@@ -69,11 +75,11 @@ function getDiagnostic(match: RegExpMatchArray): Diagnostic {
 			end: { line, character: end }
 		},
 		severity,
-		message: match[settings.message]
+		message: match[linterSettings.message]
 	};
 
-	if (settings.code) {
-		diagnostic.code = match[settings.code];
+	if (linterSettings.code) {
+		diagnostic.code = match[linterSettings.code];
 	}
 
 	return diagnostic;
@@ -82,7 +88,7 @@ function getDiagnostic(match: RegExpMatchArray): Diagnostic {
 function parseBuffer(buffer: Buffer) {
 	let result: Diagnostic[] = [];
 	let lines = buffer.toString().split("\n");
-	let problemRegex = new RegExp(settings.regexp, "m");
+	let problemRegex = new RegExp(linterSettings.regexp, "m");
 
 	lines.forEach(line => {
 		let match = line.match(problemRegex);
@@ -151,7 +157,9 @@ let needsValidating: { [index: string]: TextDocument } = {};
 
 function validate(document: TextDocument): void {
 	let uri = document.uri;
-	// connection.console.log(`Wants to validate ${uri}`);
+	if (debug) {
+		log(`Validation requested for: ${uri}`);
+	}
 
 	if (!ready || isValidating[uri]) {
 		needsValidating[uri] = document;
@@ -160,7 +168,13 @@ function validate(document: TextDocument): void {
 
 	isValidating[uri] = true;
 
-	let child = spawn("docker", `exec -i ${settings.container} ${settings.command}`.split(" "));
+	let cmd = "docker"
+	let args = `exec -i ${linterSettings.container} ${linterSettings.command}`;
+	if (debug) {
+		log(`Running command: '${cmd} ${args}'`);
+	}
+
+	let child = spawn(cmd, args.split(" "));
 	child.stdin.write(document.getText());
 	child.stdin.end();
 
@@ -178,12 +192,16 @@ function validate(document: TextDocument): void {
 	});
 
 	child.on("close", (code: string) => {
+		if (debug) {
+			log(`Command exited with code: ${code}`)
+			connection.console.log(debugString);
+		}
+
 		if (debugString.match(/^Error response from daemon/)) {
 			connection.window.showErrorMessage(`Is your container running? Error: ${debugString}`);
 		} else if (debugString.match(/^An error occurred trying to connect/)) {
 			connection.window.showErrorMessage(`Is your machine correctly configured? Error: ${debugString}`);
 		} else {
-			// connection.console.log(code + " | " + getDebugString(debugString));
 			connection.sendDiagnostics({ uri, diagnostics });
 		}
 
@@ -191,11 +209,15 @@ function validate(document: TextDocument): void {
 		let revalidateDocument = needsValidating[uri];
 
 		if (revalidateDocument) {
-			// connection.console.log(`Revalidating ${uri}`);
+			if (debug) {
+				log(`Re-validating: ${uri}`);
+			}
 			delete needsValidating[uri];
 			validate(revalidateDocument);
 		} else {
-			// connection.console.log(`Finished validating ${uri}`);
+			if (debug) {
+				log(`Validation finished for: ${uri}`);
+			}
 		}
 	});
 }
@@ -203,7 +225,7 @@ function validate(document: TextDocument): void {
 function getMessage(err: any, document: TextDocument): string {
 	let result: string = null;
 	if (typeof err.message === "string" || err.message instanceof String) {
-		result = <string>err.message;
+		result = err.message;
 		result = result.replace(/\r?\n/g, " ");
 		if (/^CLI: /.test(result)) {
 			result = result.substr(5);
@@ -236,13 +258,22 @@ function validateMany(documents: TextDocument[]): void {
 
 let linters = ["perl", "perlcritic", "flake8", "rubocop", "php"];
 connection.onDidChangeConfiguration((params) => {
-	let dockerLinterSettings = params.settings["docker-linter"];
+	let settings = params.settings["docker-linter"];
+
+	debug = settings.debug === true ? true : false;
+
 	linters.forEach(linter => {
-		if (dockerLinterSettings[linter]) {
-			settings = dockerLinterSettings[linter];
+		if (settings[linter]) {
+			linterSettings = settings[linter];
+			linterName = linter;
 		};
 	});
-	setMachineEnv(settings.machine)
+
+	if (debug) {
+		log(`Settings updated.`);
+	}
+
+	setMachineEnv(linterSettings.machine)
 		.then(response => {
 			ready = true;
 			validateMany(documents.all());
