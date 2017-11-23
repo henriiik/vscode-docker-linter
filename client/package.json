@@ -2,7 +2,7 @@
     "name": "docker-linter",
     "displayName": "Docker Linter",
     "description": "Lint perl, python and/or ruby in your docker containers.",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "author": "Henrik Sjööh <hello@enhenrik.nu> (http://www.enhenrik.nu)",
     "license": "MIT",
     "repository": {

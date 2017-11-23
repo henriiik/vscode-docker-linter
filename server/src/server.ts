@@ -173,21 +173,41 @@ function validate(document: TextDocument): void {
 	if (debug) {
 		log(`Running command: '${cmd} ${args}'`);
 	}
-
 	let child = spawn(cmd, args.split(" "));
-	child.stdin.write(document.getText());
-	child.stdin.end();
 
+
+	let input = document.getText();
+	if (debug) {
+		log(`Writing buffer:`);
+		connection.console.log(input);
+	}
+	
+	let written = child.stdin.write(input);
+	child.stdin.end();
+	if (debug) {
+		log(`Write return value: '${written}'`);
+	}
+	
 	let diagnostics: Diagnostic[] = [];
 	let debugString = "";
-
+	
 	child.stderr.on("data", (data: Buffer) => {
-		debugString += data.toString();
+		let tmp = data.toString();
+		if (debug) {
+			log(`Data on stderr:`);
+			connection.console.log(tmp);
+		}			
+		debugString += tmp;
 		diagnostics = diagnostics.concat(parseBuffer(data));
 	});
 
 	child.stdout.on("data", (data: Buffer) => {
-		debugString += data.toString();
+		let tmp = data.toString();
+		if (debug) {
+			log(`Data on stdout:`);
+			connection.console.log(tmp);
+		}			
+		debugString += tmp;
 		diagnostics = diagnostics.concat(parseBuffer(data));
 	});
 
